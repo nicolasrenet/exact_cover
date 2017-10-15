@@ -4,7 +4,7 @@ import unittest
 
 
 """ 
-	Classic, recursive implementation of N-Queen solution, from `E. W. Dijkstra <file://../E.W.Dijkstra Archive_ A Short Introduction to the Art of Programming (EWD 316), Chapter 9.html>`_.
+	Classic, recursive implementation of N-Queen solution, from `E. W. Dijkstra <../../../E.W.Dijkstra_Archive_A_Short_Introduction_to_the_Art_of_Programming_EWD_316_Chapter_9.html>`_.
 """
 
 def print_solution( qc ):
@@ -16,7 +16,6 @@ def print_solution( qc ):
 		_ _ _ X
 		X _ _ _
 		_ _ X _
-
 
 	:param qc: a vector of column indices, whose first element is the queen position  in the first row, the second element is the queen position in the second row, and so on.
 	:type qc: list
@@ -52,6 +51,10 @@ def eight_queen():
 	
 	Only modification: N, the current number of queens on the board, is passed as a parameter to the recursive
 	function.
+
+	.. todo::
+
+		Implement the function, using `Dijkstra's pseudo-code <../../../E.W.Dijkstra_Archive_A_Short_Introduction_to_the_Art_of_Programming_EWD_316_Chapter_9.html>`_ as an inspiration.
 	
 	:return: a (sorted) list of solution codes, where each vector of column numbers is encoded as an integer (call the encode_solution_ procedure).
 	:rtype: list
@@ -62,6 +65,10 @@ def eight_queen():
 def n_queen(n):
 	""" (EXTRA-CREDIT +10 pts - UNCOMMENT THE CORRESPONDING UNIT TESTS) An easy generalization to N queens.
 	
+	.. todo::
+
+		Implement the function, using `Dijkstra's pseudo-code <../../../E.W.Dijkstra_Archive_A_Short_Introduction_to_the_Art_of_Programming_EWD_316_Chapter_9.html>`_ as an inspiration.
+
 	:param n: the number of queens, as well as the board size (:math:`n\\times n`)
 	:type n: int
 	:return: a (sorted) list of solution codes, where each vector of column numbers is encoded as an integer (call the encode_solution_ procedure).
