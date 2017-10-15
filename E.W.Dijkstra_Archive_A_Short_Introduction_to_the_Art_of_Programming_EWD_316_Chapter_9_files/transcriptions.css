@@ -1,0 +1,134 @@
+      body {
+        color: black;
+        background-color: white;
+      }
+      hr {
+        height: 1px;
+        color: black;
+        background-color: black;
+        border: 0;
+      }
+.right {
+	float: right;
+}
+      a {
+        color: blue;
+        background-color: transparent;
+      }
+      a:hover, a:active {
+	color: white;
+	background-color: blue;
+	text-decoration: none;
+	text-align: justify;
+      }
+      h1, h2 {
+        font-variant: normal;
+        font-size: 100%; 
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: underline;
+      }
+p {text-indent: 2em; margin-top: 2ex; margin-bottom: 0pt;}
+p.continue {text-indent: 0pt; margin-top: 0pt; margin-bottom: 0pt;}
+p.noindent {text-indent: 0pt; margin-top: 2ex; margin-bottom: 0pt;}
+p.nospace  {text-indent: 2em; margin-top: 0pt; margin-bottom: 0pt;}
+p.rightalign {text-align: right;}
+p.center {text-indent: 0pt; text-align: center;}
+p.colofon {text-indent: 0pt; font-size: smaller;}
+p.p0{text-indent: 2em; margin-top: 1ex; margin-bottom: 0pt;}
+p.p1{text-indent: 0pt; margin-top: 1ex; margin-bottom: 0pt;}
+      #frame {width: 39em;}
+      #header {text-align: right;}
+      #footer {font-size: 90%;}
+.nowrap { white-space: nowrap; } 
+.smallCaps {
+	font-size: small;
+	font-variant: small-caps;
+}
+#title {
+	font-size: x-large;
+	font-style: normal;
+	font-weight: bold;
+}
+.half-space {
+	letter-spacing: -0.1em;
+}
+.supsub {
+	position: absolute
+}
+.subscript {
+	display:block; 
+	position:relative; 
+	left:2px; 
+	top: -5px;
+	font-size: small;
+}
+.superscript {
+	display:block; 
+	position:relative; 
+	left:2px; 
+	top: -5px;
+	font-size: small;
+}
+.smallFont {
+	font-size: x-small;
+}
+
+.bigfont {
+	font-size: x-large;	
+}
+
+.intsuma {
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+	text-align: center;
+}
+.intsuma > span {
+    display: block;
+    font-size: 70%;
+}
+.intsuma .lim-up {
+    margin-bottom: -0.5ex;
+}
+.intsuma .lim {
+    margin-top: -0.5ex;
+}
+.intsuma .sum {
+	font-size: 1.25em;
+	font-weight: normal;
+	margin-top: -0.5ex;
+}
+
+.intsuma .int {
+	font-size: 1.8em;
+	font-weight: normal;
+	margin-top: -0.4ex;
+}
+
+
+.intsuma .sum-frac {
+	font-size: 1.25em;
+	font-weight: 100;
+	margin-top: -0.5ex;
+}
+
+.eq-c .intsumb {
+	vertical-align: -10%;
+}
+
+.fraction {
+    display: inline-block;
+    vertical-align: middle; 
+    margin: 0 0.2em 0.4ex;
+    text-align: center;
+}
+.fraction > span {
+    display: block;
+    padding-top: 0.15em;
+}
+.fraction span.fdn {
+	border-top: thin solid black;
+}
+
+.fraction span.bar {display: none;}

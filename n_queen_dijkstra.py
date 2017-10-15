@@ -3,20 +3,24 @@
 import unittest
 
 
-""" N-Queen solution, from Dijkstra """
+""" 
+	Classic, recursive implementation of N-Queen solution, from `E. W. Dijkstra <file://../E.W.Dijkstra Archive_ A Short Introduction to the Art of Programming (EWD 316), Chapter 9.html>`_.
+"""
 
 def print_solution( qc ):
 	""" 
 	Print a solution chessboard on the console.
+	For example, given the first solution for the 4-Queen problem :math:`[1,3,0,2]`, the function prints the chessboard configuration that follows::
 
-	:param qc: a vector of column indices, whose first element is the column index for the queen in the first row, the second element is the column index for the queen in the second row, and so on. For example, the first solution for the 4-Queen problem is
+		X _ _ _
+		_ _ _ X
+		X _ _ _
+		_ _ X _
 
-	.. code-block::
-		[1,3,0,2]
 
+	:param qc: a vector of column indices, whose first element is the queen position  in the first row, the second element is the queen position in the second row, and so on.
 	:type qc: list
 	"""
-
 	n = len(qc)
 	for row in range(n):
 		row_string_array = [ '' for col in range(n) ]
@@ -31,19 +35,7 @@ def encode_solution(qc):
 	""" 
 	.. _encode_solution:
 
-	Encode a solution as a radix-10 integer. For example, the solution::
-
-		X _ _ _ _ _ _ _
-		_ _ _ _ X _ _ _
-		_ _ _ _ _ _ _ X
-		_ _ _ _ _ X _ _
-		_ _ X _ _ _ _ _
-		_ _ _ _ _ _ X _
-		_ X _ _ _ _ _ _
-		_ _ _ X _ _ _ _
-
-	in which rows 1 through 8 have queens in respective columns 1, 5, 8, 6, 3, 7, 2, and 4, is returned as vector 
-	`[1,5,8,6,3,7,2,4]`, and encoded  as integer :math:`15,863,724`.
+	Encode a solution as a radix-10 integer. For example, the solution :math:`[0,4,7,5,2,6,1,3]` in which rows 0 through 7 have queens in columns 0, 4, 7, 5, 2, 6, 1, and 3 respectively, is encoded  as integer :math:`4,752,613`.
 
 	:param qc: a vector a column indices, where each each index is the position of the queen for the corresponding row.
 	:type qc: list
@@ -56,7 +48,7 @@ def encode_solution(qc):
 	return solution_code
 
 def eight_queen():
-	""" As written by Dijkstra in A Short Introduction to the Art of Programming, chapter 9, 1971.
+	""" As written by Dijkstra in *A Short Introduction to the Art of Programming*, chapter 9, 1971.
 	
 	Only modification: N, the current number of queens on the board, is passed as a parameter to the recursive
 	function.
@@ -106,7 +98,7 @@ def eight_queen():
 def n_queen(n):
 	""" An easy generalization to N queens.
 	
-	:param n: the number of queens, as well as the board size (NxN)
+	:param n: the number of queens, as well as the board size (:math:`n\\times n`)
 	:type n: int
 	:return: a list of solution codes, where each vector of column numbers is encoded as an integer (call the encode_solution_ procedure).
 	
