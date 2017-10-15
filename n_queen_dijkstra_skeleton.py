@@ -4,7 +4,7 @@ import unittest
 
 
 """ 
-	Classic, recursive implementation of N-Queen solution, from `E. W. Dijkstra <../../../E.W.Dijkstra_Archive_A_Short_Introduction_to_the_Art_of_Programming_EWD_316_Chapter_9.html>`_.
+	Classic, recursive implementation of N-Queen solution, from `E. W. Dijkstra <file://../E.W.Dijkstra Archive_ A Short Introduction to the Art of Programming (EWD 316), Chapter 9.html>`_.
 """
 
 def print_solution( qc ):
@@ -40,7 +40,7 @@ def encode_solution(qc):
 	:param qc: a vector a column indices, where each each index is the position of the queen for the corresponding row.
 	:type qc: list
 	:return: a radix-10 representation of the vector of indices.
-	:rtype: list
+	:rtype: int
 	"""
 	solution_code = 0
 	for col in qc:
@@ -53,93 +53,22 @@ def eight_queen():
 	Only modification: N, the current number of queens on the board, is passed as a parameter to the recursive
 	function.
 	
-	:return: a list of solution codes, where each vector of column numbers is encoded as an integer (call the encode_solution_ procedure).
+	:return: a (sorted) list of solution codes, where each vector of column numbers is encoded as an integer (call the encode_solution_ procedure).
 	:rtype: list
 	"""
+	pass
 
-	# initialize empty board
-	queen_columns = [ 0 ] * 8
-	free_columns = [ True ] * 8
-	free_up_diag = [ True ] * 15
-	free_down_diag = [ True ] * 15
-
-	solutions = []
-
-	def generate(n):
-		# base case: the board is full -> print the configuration
-		if n == 8:
-			solutions.append( encode_solution( queen_columns ))
-			#print("\n--- Solution {} ---\n".format( len(solutions)) )
-			#print_solution( queen_columns )
-			return
-		for h in range( 8 ):
-
-			# check that the position (n,h) is free
-			if free_columns[h] and free_up_diag[ n+h ] and free_down_diag[ h-n + 7 ]:
-				# set queen on square H
-				queen_columns[ n ] = h
-				free_columns[ h ] = False
-				free_up_diag[ n+h ] = False
-				free_down_diag[ h-n + 7 ] = False
-
-				# add 1 more queen
-				generate(n+1)
-
-				# backtracking: remove queen from square H
-				free_columns[ h ] = True
-				free_up_diag[ n+h ] = True
-				free_down_diag[ h-n + 7 ] = True
-
-	# top recursive call
-	generate(0)
-
-	return solutions
 
 def n_queen(n):
-	""" An easy generalization to N queens.
+	""" (EXTRA-CREDIT +10 pts - UNCOMMENT THE CORRESPONDING UNIT TESTS) An easy generalization to N queens.
 	
 	:param n: the number of queens, as well as the board size (:math:`n\\times n`)
 	:type n: int
-	:return: a list of solution codes, where each vector of column numbers is encoded as an integer (call the encode_solution_ procedure).
+	:return: a (sorted) list of solution codes, where each vector of column numbers is encoded as an integer (call the encode_solution_ procedure).
 	
-	:rtype: int
+	:rtype: list
 	"""
-
-	# initialize empty board
-	queen_columns = [ 0 ] * n
-	free_columns = [ True ] * n
-	free_up_diag = [ True ] * (n*2-1)
-	free_down_diag = [ True ] * (n*2-1)
-	solutions = []
-
-	def generate(q):
-		# base case: the board is full -> print the configuration
-		if q == n:
-			solutions.append( encode_solution( queen_columns ))
-			#print("\n--- Solution {} ---\n".format( len(solutions)) )
-			#print_solution( queen_columns )
-			return
-		for h in range( n ):
-
-			# check that the position (n,h) is free
-			if free_columns[h] and free_up_diag[ q+h ] and free_down_diag[ h-q + n - 1 ]:
-				# set queen on square H
-				queen_columns[ q ] = h
-				free_columns[ h ] = False
-				free_up_diag[ q+h ] = False
-				free_down_diag[ h-q + n - 1 ] = False
-
-				# add 1 more queen
-				generate(q+1)
-
-				# remove queen from square H
-				free_columns[ h ] = True
-				free_up_diag[ q+h ] = True
-				free_down_diag[ h-q + n -1 ] = True
-
-	generate(0)
-
-	return solutions
+	pass
 
 class NQueenTest( unittest.TestCase):
 
@@ -167,39 +96,40 @@ class NQueenTest( unittest.TestCase):
 	def test_eight_queen_2(self):
 		self.assertEqual( eight_queen(), self.eight_queen_solutions)
 
-
-	def test_four_queen_1(self):
-		self.assertEqual( len(n_queen(4)), 2)
-
-	def test_four_queen_2(self):
-		self.assertEqual( n_queen(4), [1302, 2031])
-
-	def test_five_queen_1(self):
-		self.assertEqual( len(n_queen(5)), 10)
-
-	def test_five_queen_2(self):
-		self.assertEqual( n_queen(5), [2413, 3142, 13024, 14203, 20314, 24130, 30241, 31420, 41302, 42031])
-
-	def test_six_queen_2(self):
-		self.assertEqual( len(n_queen(6)), 4 )
-
-	def test_six_queen_2(self):
-		self.assertEqual( n_queen(6), [135024, 251403, 304152, 420531] )
-
-	def test_seven_queen_1(self):
-		self.assertEqual( len(n_queen(7)), 40)
-
-	def test_seven_queen_2(self):
-		self.assertEqual( n_queen(7), self.seven_queen_solutions )
-
-	def test_eight_queen_3(self):
-		self.assertEqual( len(n_queen(8)), 92)
-
-	def test_eight_queen_4(self):
-		self.assertEqual( n_queen(8), self.eight_queen_solutions)
-
-	def test_nine_queen(self):
-		self.assertEqual( len(n_queen(9)), 352)
+## UNCOMMENT FOR EXTRA-CREDIT WORK
+#
+#	def test_four_queen_1(self):
+#		self.assertEqual( len(n_queen(4)), 2)
+#
+#	def test_four_queen_2(self):
+#		self.assertEqual( n_queen(4), [1302, 2031])
+#
+#	def test_five_queen_1(self):
+#		self.assertEqual( len(n_queen(5)), 10)
+#
+#	def test_five_queen_2(self):
+#		self.assertEqual( n_queen(5), [2413, 3142, 13024, 14203, 20314, 24130, 30241, 31420, 41302, 42031])
+#
+#	def test_six_queen_2(self):
+#		self.assertEqual( len(n_queen(6)), 4 )
+#
+#	def test_six_queen_2(self):
+#		self.assertEqual( n_queen(6), [135024, 251403, 304152, 420531] )
+#
+#	def test_seven_queen_1(self):
+#		self.assertEqual( len(n_queen(7)), 40)
+#
+#	def test_seven_queen_2(self):
+#		self.assertEqual( n_queen(7), self.seven_queen_solutions )
+#
+#	def test_eight_queen_3(self):
+#		self.assertEqual( len(n_queen(8)), 92)
+#
+#	def test_eight_queen_4(self):
+#		self.assertEqual( n_queen(8), self.eight_queen_solutions)
+#
+#	def test_nine_queen(self):
+#		self.assertEqual( len(n_queen(9)), 352)
 
 if __name__ == '__main__':
 	unittest.main()

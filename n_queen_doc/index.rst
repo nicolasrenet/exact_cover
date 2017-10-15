@@ -14,7 +14,7 @@ Contents:
 
 Classic, recursive implementation of N-Queen solution, from `E. W. Dijkstra <../../../E.W.Dijkstra_Archive_A_Short_Introduction_to_the_Art_of_Programming_EWD_316_Chapter_9.html>`_.
 
-.. automodule:: n_queen_dijkstra
+.. automodule:: n_queen_dijkstra_skeleton
 	:members:
 
 
