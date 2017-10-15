@@ -1,0 +1,147 @@
+\documentclass[table]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{manfnt,amsmath,amsfonts}
+\usepackage{clrscode3e,latexsym}
+\usepackage{graphicx,subfig}
+\usepackage[margin=.7in]{geometry}
+\usepackage{tikz}
+\usepackage{enumitem,booktabs,array,xcolor}
+\usepackage{beton}
+\usepackage{euler}
+
+\title{Exact Cover Problems}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Regular Exact Cover problem}
+
+Use backtracking to solve the following exact cover problem, that is: {\bf is there a set of rows containing exactly one $1$ in each column?}
+\vspace{1em}
+
+\begin{minipage}{.5\linewidth}
+$\begin{bmatrix}
+1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+0 & 1 & 0 & 0 & 0 & 0 & 1 
+\end{bmatrix}$
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+Initial configuration: in column 0, choosing row 0.
+\end{minipage}
+
+\vspace{1em}
+
+
+\begin{minipage}{.5\linewidth}
+$\begin{bmatrix}
+1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+0 & 1 & 0 & 0 & 0 & 0 & 1 
+\end{bmatrix}$
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+\end{minipage}
+Cover row 2 (conflicts 
+\vspace{1em}
+
+
+\begin{minipage}{.5\linewidth}
+$\begin{bmatrix}
+1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+0 & 1 & 0 & 0 & 0 & 0 & 1 
+\end{bmatrix}$
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+\end{minipage}
+
+\vspace{1em}
+
+
+\begin{minipage}{.5\linewidth}
+$\begin{bmatrix}
+1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+0 & 1 & 0 & 0 & 0 & 0 & 1 
+\end{bmatrix}$
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+\end{minipage}
+
+\vspace{1em}
+
+\begin{minipage}{.5\linewidth}
+$\begin{bmatrix}
+1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+0 & 1 & 0 & 0 & 0 & 0 & 1 
+\end{bmatrix}$
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+\end{minipage}
+
+\vspace{1em}
+
+
+\begin{minipage}{.5\linewidth}
+$\begin{bmatrix}
+1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+0 & 1 & 0 & 0 & 0 & 0 & 1 
+\end{bmatrix}$
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+\end{minipage}
+
+\vspace{1em}
+\section{Pentomino}
+
+The Pentomino is a tiling problem involving
+\begin{itemize}
+\item 12 different tiles, each of them covering 5 cells
+\item a $6x10$ grid
+\end{itemize}
+
+The following is one of the many solutions to the Pentomino problem:
+\vspace{1em}
+
+\begin{center}
+\includegraphics[width=.4\linewidth]{pentominoes6x10.png}
+\end{center}
+
+\vspace{1em}
+
+Design the exact cover matrix for the Pentomino problem:
+\begin{itemize}
+	\item what should it be represented by its columns?
+	\item what should each row of the matrix represent?
+	\item what is a solution to the problem?
+\end{itemize}
+
+\section{A generalized exact cover problem: 8-Queens}
+
+Design the exact cover matrix for the 8-Queen problem.
+
+\end{document}

@@ -1,0 +1,255 @@
+#!/usr/bin/python3
+
+import unittest
+import exact_cover as dlx
+
+dlx.LOGLEVEL=3
+
+class Sudoku( dlx.ExactCover ):
+
+	
+		def __init__(self, game, box_constraint ):
+			super().__init__()
+			self.game = game
+			self.build_matrix( box_constraint )
+			self.build_links()
+
+		def build_matrix(self, box_constraint = False):
+			dlx.log( "build_matrix(box_constraint={})".format( box_constraint))
+			self.matrix = self.game_to_matrix( self.game, box_constraint )
+
+
+		def solution_string(self, solution, solution_count=0):
+			count = 0
+			if solution_count > 0: count = solution_count
+
+			solution_str_array = ["\n-----  Solution {} ------\n".format(count) ]
+
+			# the solution rows, in raw form
+			solution_entries_array = []
+			for i in solution:
+				if i is None: break
+				nodes = [ int(i.column.name) ]
+				j = i.right
+				while j is not i:
+					nodes.append( int(j.column.name))
+					j = j.right
+				solution_entries_array.append( sorted( nodes))
+			#solution_str_array += [ str( entry ) for entry in  sorted( solution_entries_array, key=lambda x: x[0]) ]
+
+			# the sudoku grid
+			solution_grid = [ row[:] for row in self.game ]		
+			for entry in solution_entries_array:
+				row = entry[0]//9
+				col = entry[0]%9
+				solution_grid[row][col] = entry[1] -9*(9+row) + 1
+			solution_str_array.append('')
+			solution_str_array.append( self.game_string( solution_grid ))
+
+			return '\n'.join( solution_str_array )
+
+		
+		def game_string( self, game ):
+			game_str_array = []
+			for row in game:
+				game_str_array.append( str(row) )
+			return '\n'.join( game_str_array)
+				
+					
+		def game_to_matrix(self, game, box_constraint = False ):
+			""" Construct an exact cover matrix from a partially filled grid
+			
+			:param game: a numerical matrix of values in the range [0-9], where 0 indicates an empty position
+			:param box_constraint: meet the box constraint requirement
+			:type box_constraint: bool
+			:return: a Boolean matrix, with 324 (box constraint relaxed) or 486 (with box constraint met) columns
+			:rtype: list
+			"""
+			matrix = []
+			
+			dlx.log( "game_to_matrix(box_constraint={})".format( box_constraint))
+			# compute set of values contained in every row and column, in order to narrow down
+			# the set of candidate values for empty cells
+			row_sets = []
+			for row_val in game:
+				row_set = set()
+				for col_val in row_val:
+					if col_val > 0:
+						row_set.add( col_val )
+				row_sets.append( row_set )
+			
+			col_sets = []
+			for col in range(len(game[0])):
+				col_set = set()
+				col_val = [ game[row][col] for row in range(len(game)) ]
+				for val in col_val:
+					if val > 0:
+						col_set.add( val )
+				col_sets.append( col_set )
+
+			box_sets = []
+			for box_row in range(3):
+				for box_col in range(3):
+					box_set = set()
+					for m in range(3):
+						for n in range(3):
+							val = game[ box_row*3 + m][box_col*3 + n]
+							if val > 0:
+								box_set.add( val )
+					dlx.log(box_set, 2)	
+					box_sets.append( box_set )
+
+				
+			# go row by row...
+			for  row in range(len(game)):
+				for col in range(len(game[row])):
+					val = game[row][col]
+					# if value set, create the corresponding, unique row in the matrix
+					
+					if val > 0:
+						matrix.append( self.set_row( row, col, val, box_constraint ))
+					else:
+						possible_values = { 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+						# compute the complement of the union of the row set and col set
+						possible_values -= ( row_sets[row] | col_sets[col] )
+						dlx.log(possible_values, 2)
+						if box_constraint:
+							box_number = ( row - row%3 + col// 3)
+							#dlx.log('{} - {}'.format( possible_values, box_sets[box_number]), 2)
+							possible_values -= box_sets[box_number]
+							dlx.log("-->{}".format(possible_values),2)
+						#print("Possible values: {}".format(possible_values)
+						for possible in possible_values:
+							matrix.append( self.set_row( row, col, possible, box_constraint ))
+			print(len(matrix))
+			return matrix
+
+
+		def set_row(self, row, col, val, box):
+			""" 
+			Create a new row in the matrix, with the following pattern:
+			
+			Subarrays R1-R9:
+
+			[ column selection for row 1 : 9 elements ] ... [ column selection for row 9 : 9 elements ] 
+
+			Subarrays RV1-RV9:
+
+			[ values for row 1 : 9 elements ] ... [ values for row 9 : 9 elements ]
+	
+			Subarrays C1-C9:
+
+			[ row selection for column 1 : 9 elements ] ... [ row selection for column 9 : 9 elements ] 
+
+			Subarrays CV1-CV9:
+
+			[ values for column 1 : 9 elements ] ... [ values for column 9 : 9 elements ]
+
+			Subarrays B1-B9:
+
+			[ cell selection for box 1 : 9 elements ] ... [ cell selection for box 9 : 9 elements ] 
+
+			Subarrays BV1-BV9:
+
+			[ values for box 1 : 9 elements ] ... [ values for box 9 : 9 elements ]
+
+			Each row has (9*9) * 6 = 486 elements
+
+			Example:
+				if grid contains 7 in (5,8), create a new row of size 486 in the matrix with the following positions set to 1:
+
+				R5[8]  (marks position 8 in row 5 as taken)
+				RV5[7] (position for this row is assigned value 7)
+				C8[5]	(marks position 5 in col 8 as taken)
+				CV8[7] (position for this column is assigned value 7)
+				B6[5] (marks position 5 in box 6 as taken)
+				BV6[7] (position for this box is assigned value 7)
+
+			Grid cells that have 2 or more candidate values result in as many new rows in the matrix.
+
+			:param row: grid row
+			:param col: grid column
+			:param val: grid value
+			:param box: meet the box constraint requirement
+			"""
+			dlx.log( "set_row(box_constraint={})".format( box))
+			if (box):
+				m_row = [ 0 for i in range( 9*9 * 6 ) ]
+			else:
+				m_row = [ 0 for i in range( 9*9 * 4 ) ]
+			# row * col position 
+			m_row[9*row + col] = 1
+			# value (unique for the row)
+			m_row[ 9*(9 + row) + val - 1] = 1
+
+			# col * row position
+			m_row[ 9*9*2 + 9*col + row ] = 1
+			# value (unique for the col)
+			m_row[ 9*9*3 + 9*col + val - 1 ] = 1
+
+			# box constraint
+			if (box):
+				# box number, as computed from row/col
+				box_row = row%3
+				box_col = col%3
+				box_number = ( row - box_row + col// 3)
+				#print(row, col, box_number, box_row, box_col)
+				# box-based position
+				m_row[ 9*9*4 + 9*box_number + box_row*3+box_col   ] = 1
+				# box-based value
+				m_row[ 9*9*5 + 9*box_number + val - 1 ] = 1
+
+			return m_row
+
+				 
+				
+
+
+class SudokuTest( unittest.TestCase):
+
+	game1 = [
+		[5,0,0, 0,1,2, 7,8,0],
+		[0,0,7, 0,0,0, 6,4,0],
+		[0,0,0, 0,0,7, 0,0,1],
+		[0,0,6, 8,0,0, 0,0,0],
+		[3,4,0, 0,0,0, 0,7,6],
+		[0,0,0, 0,0,6, 9,0,0],
+		[1,0,0, 5,0,0, 0,0,0],
+		[0,8,2, 0,0,0, 5,0,0],
+		[0,5,3, 7,8,0, 0,0,9]
+	]
+
+	game2 = [
+		[9,0,0, 0,7,0, 0,1,3],
+		[0,0,4, 0,0,0, 2,0,0],
+		[1,0,0, 9,0,0, 0,0,0],
+		[0,8,1, 7,0,0, 0,0,0],
+		[0,0,0, 6,2,1, 0,0,0],
+		[0,0,0, 0,0,3, 4,7,0],
+		[0,0,0, 0,0,8, 0,0,9],
+		[0,0,5, 0,0,0, 6,0,0],
+		[3,4,0, 0,9,0, 0,0,8]
+	]
+
+	def test_1_sudoku_without_box_constraint(self):
+		sudoku = Sudoku( self.game1, False )
+		self.assertEqual( sudoku.solve(81, count_only=True), 94571)
+
+	
+	def test_2_sudoku(self):
+		sudoku = Sudoku( self.game1, True )
+		self.assertEqual( sudoku.solve(81), 1)
+
+	
+	def test_3_sudoku_without_box_constraint(self):
+		sudoku = Sudoku( self.game2, False )
+		self.assertEqual( sudoku.solve(81, count_only=True), 1582533)
+
+	
+	def test_4_sudoku(self):
+		sudoku = Sudoku( self.game2, True )
+		self.assertEqual( sudoku.solve(81), 1)
+		
+
+if __name__=='__main__':
+	unittest.main()

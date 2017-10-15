@@ -1,0 +1,193 @@
+\documentclass[table]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{manfnt,amsmath,amsfonts}
+\usepackage{clrscode3e,latexsym}
+\usepackage{graphicx,subfig}
+\usepackage[margin=.7in]{geometry}
+\usepackage{tikz}
+\usepackage{enumitem,booktabs,array,xcolor}
+\usepackage{beton}
+\usepackage{euler}
+\usepackage{kbordermatrix}
+
+\title{Exact Cover Problems}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Regular Exact Cover problem}
+
+Use backtracking to solve the following exact cover problem, that is: {\bf is there a set of rows containing exactly one $1$ in each column?}
+\vspace{1em}
+
+We use the following recursive procedure, where $A$ is a Boolean matrix, and $S$ is the solution set of rows:
+\vspace{1em}
+
+\fbox{\begin{minipage}{.9\linewidth}\begin{codebox}
+	\Procname{$\proc{ExactCover}(A, S)$}
+	\li \If $A$ is empty
+	\li	\Then \Return Success
+	    \End
+	\li \If $A$ has a $0$ column
+	\li	\Then \Return Fail
+	    \End
+	\li Select column $c$ with least number of $1$s	
+	\li	\For each row $r$ such that $A[r,c]==1$
+	\li		\Do Add row $r$ to solution $S$
+	\li		Cover all columns that are selected by row $r$, as well as all rows that conflict with $r$
+	%\li		 \For each column $j$ such that $A[r,j]==1$
+	%\li			\Do delete column $A[j]$ from $A$
+	%\li			\For each row $i$ such that $A[i,j]==1$
+	%\li				\Do delete row $A[i]$ from $A$
+	%			\End
+	%		\End
+	\zi		\Comment Recursively search reduced matrix $A$
+	\li		$\proc{ExactCover}(A)$
+	\zi		\Comment Partial solutions that include row $r$ have been explored:
+	\zi		\Comment backtracking before trying another row
+	\li		Restore previously deleted rows and columns
+	\li		Remove row  $r$  from solution $S$
+		\End
+	
+	\zi		\Comment Solutions obtained by selecting column $c$ have been explored:
+	\zi		\Comment backtracking before trying another column
+	\li Restore column $c$ in matrix $A$
+\end{codebox}\end{minipage}}
+
+\vspace{2em}
+
+$\kbordermatrix{
+    & c_1 &  c_2 &  c_3 &  c_4 &  c_5 & c_6 & c_7\\
+r_1 & 1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+r_2 & 1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+r_3 & 0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+r_4 & 0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+r_5 & 0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+r_6 & 0 & 1 & 0 & 0 & 0 & 0 & 1 
+}$
+\hfill
+$\kbordermatrix{
+    & c_1 &  c_2 &  c_3 &  c_4 &  c_5 & c_6 & c_7\\
+r_1 & 1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+r_2 & 1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+r_3 & 0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+r_4 & 0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+r_5 & 0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+r_6 & 0 & 1 & 0 & 0 & 0 & 0 & 1 
+}$
+\hfill
+$\kbordermatrix{
+    & c_1 &  c_2 &  c_3 &  c_4 &  c_5 & c_6 & c_7\\
+r_1 & 1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+r_2 & 1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+r_3 & 0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+r_4 & 0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+r_5 & 0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+r_6 & 0 & 1 & 0 & 0 & 0 & 0 & 1 
+}$
+
+\vspace{1em}
+
+
+$\kbordermatrix{
+    & c_1 &  c_2 &  c_3 &  c_4 &  c_5 & c_6 & c_7\\
+r_1 & 1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+r_2 & 1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+r_3 & 0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+r_4 & 0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+r_5 & 0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+r_6 & 0 & 1 & 0 & 0 & 0 & 0 & 1 
+}$
+\hfill
+$\kbordermatrix{
+    & c_1 &  c_2 &  c_3 &  c_4 &  c_5 & c_6 & c_7\\
+r_1 & 1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+r_2 & 1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+r_3 & 0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+r_4 & 0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+r_5 & 0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+r_6 & 0 & 1 & 0 & 0 & 0 & 0 & 1 
+}$
+\hfill
+$\kbordermatrix{
+    & c_1 &  c_2 &  c_3 &  c_4 &  c_5 & c_6 & c_7\\
+r_1 & 1 & 0 & 0 & 1 & 0 & 0 & 1 \\
+r_2 & 1 & 0 & 0 & 1 & 0 & 0 & 0 \\
+r_3 & 0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+r_4 & 0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+r_5 & 0 & 1 & 1 & 0 & 0 & 1 & 1 \\
+r_6 & 0 & 1 & 0 & 0 & 0 & 0 & 1 
+}$
+
+
+\subsection{Generalized Exact Cover problem}
+
+Solve this generalized exact cover problem, that is: {\bf Is there a set of rows containing {\em exactly one} $1$ in each primary column} ($c_1$ through $c_5$), and {\bf {\em at most one} $1$ in each secondary column} ($c_6$ and $c_7$)?
+
+Use the {\sc ExactCover} procedure above, but change line~3 to 
+
+\begin{center}{\bf if} $A$ has a $0$ primary column... \end{center}
+
+$\kbordermatrix{
+    &{\mathbf c_1} & {\mathbf c_2} & {\mathbf c_3} & {\mathbf c_4} & {\mathbf c_5} & c_6 & c_7\\
+r_1 &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & 1 \\
+r_2 &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & 0 \\
+r_3 &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} &{\mathbf 0} & 0 & 1 \\
+r_4 &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & 0 \\
+r_5 &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} & 1 & 1 \\
+r_6 &{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 0} & 1 & 1 
+}$
+\hfill
+$\kbordermatrix{
+    &{\mathbf c_1} & {\mathbf c_2} & {\mathbf c_3} & {\mathbf c_4} & {\mathbf c_5} & c_6 & c_7\\
+r_1 &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & 1 \\
+r_2 &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & 0 \\
+r_3 &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} &{\mathbf 0} & 0 & 1 \\
+r_4 &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & 0 \\
+r_5 &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} & 1 & 1 \\
+r_6 &{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 0} & 1 & 1 
+}$
+\hfill
+$\kbordermatrix{
+    &{\mathbf c_1} & {\mathbf c_2} & {\mathbf c_3} & {\mathbf c_4} & {\mathbf c_5} & c_6 & c_7\\
+r_1 &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & 1 \\
+r_2 &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & 0 \\
+r_3 &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} &{\mathbf 0} & 0 & 1 \\
+r_4 &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & 0 \\
+r_5 &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} & 1 & 1 \\
+r_6 &{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 0} & 1 & 1 
+}$
+
+\vspace{1em}
+
+\section{An application: Pentomino}
+
+The Pentomino is a tiling problem involving
+\begin{itemize}
+\item 12 different tiles, each of them covering 5 cells
+\item a $6x10$ grid
+\end{itemize}
+
+The following is one of the many solutions to the Pentomino problem:
+\vspace{1em}
+
+\begin{center}
+\includegraphics[width=.4\linewidth]{pentominoes6x10.png}
+\end{center}
+
+\vspace{1em}
+
+Design the exact cover matrix for the Pentomino problem:
+\begin{itemize}
+	\item what should it be represented by its columns?
+	\item what should each row of the matrix represent?
+	\item what is a solution to the problem?
+\end{itemize}
+
+Hint: Pentomino is a regular exact cover problem.
+
+
+\end{document}

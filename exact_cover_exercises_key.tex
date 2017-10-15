@@ -1,0 +1,275 @@
+\documentclass[table]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{manfnt,amsmath,amsfonts}
+\usepackage{clrscode3e,latexsym}
+\usepackage{graphicx,subfig}
+\usepackage[margin=.7in]{geometry}
+\usepackage{tikz}
+\usepackage{enumitem,booktabs,array,xcolor}
+\usepackage{beton}
+\usepackage{euler}
+
+\newcommand{\tikzmark}[2]{\tikz[overlay,remember picture,baseline] \node [anchor=base] (#1) {$#2$};}
+
+\newcommand{\DrawHorLine}[3][]{%
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[#1] (#2.west) -- (#3.east);
+  \end{tikzpicture}
+}
+
+\newcommand{\DrawVertLine}[3][]{%
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[#1] (#2.north) -- (#3.south);
+  \end{tikzpicture}
+}
+
+\title{Exact Cover Problems}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Regular Exact Cover problem}
+
+Use backtracking to solve the following exact cover problem, that is: {\bf is there a set of rows containing exactly one $1$ in each column?}
+\vspace{1em}
+
+\begin{minipage}{.5\linewidth}
+$\begin{matrix}r_0\\ r_1\\ r_2\\ r_3\\ r_4\\ r_5\end{matrix}
+\begin{bmatrix}
+\tikzmark{m111}1 & \tikzmark{m112} 0 & \tikzmark{m113} 0 & \tikzmark{m114}1 & \tikzmark{m115} 0 & \tikzmark{m116} 0 & \tikzmark{m117}1 \\
+\tikzmark{m121}1 & 0 & 0 & 1 & 0 & 0 & \tikzmark{m127}0 \\
+\tikzmark{m131}0 & 0 & 0 & 1 & 1 & 0 & \tikzmark{m137}1 \\
+\tikzmark{m141}0 & 0 & 1 & 0 & 1 & 1 & \tikzmark{m147}0 \\
+\tikzmark{m151}0 & 1 & 1 & 0 & 0 & 1 & \tikzmark{m157}1 \\
+\tikzmark{m161}0 & \tikzmark{m162} 1 & \tikzmark{m163} 0 & \tikzmark{m164}0 & \tikzmark{m165} 0 & \tikzmark{m166} 0 & \tikzmark{m167}1 
+\end{bmatrix}$
+
+\DrawHorLine[red, thick, opacity=0.5]{m111}{m117}
+\DrawVertLine[blue, thick, opacity=0.5]{m111}{m161}
+
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+Initial configuration: in column 0, selecting row 0, as part of the solution.
+\end{minipage}
+
+\vspace{1em}
+
+
+\begin{minipage}{.5\linewidth}
+$\begin{matrix}r_0\\ r_1\\ r_2\\ r_3\\ r_4\\ r_5\end{matrix}
+\begin{bmatrix}
+\tikzmark{m211}1 & 0 & 0 & \tikzmark{m214}1 & 0 & 0 & \tikzmark{m217}1 \\
+\tikzmark{m221}1 & 0 & 0 & 1 & 0 & 0 & \tikzmark{m227}0 \\
+\tikzmark{m231}0 & 0 & 0 & 1 & 1 & 0 & \tikzmark{m237}1 \\
+0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+\tikzmark{m251}0 & 1 & 1 & 0 & 0 & 1 & \tikzmark{m257}1 \\
+\tikzmark{m261}0 & 1 & 0 & \tikzmark{m264}0 & 0 & 0 & \tikzmark{m267}1 
+\end{bmatrix}$
+
+\DrawHorLine[red, thick, opacity=0.5]{m211}{m217}
+\DrawHorLine[black, thick, opacity=0.5]{m221}{m227}
+\DrawHorLine[black, thick, opacity=0.5]{m231}{m237}
+\DrawHorLine[black, thick, opacity=0.5]{m251}{m257}
+\DrawHorLine[black, thick, opacity=0.5]{m261}{m267}
+\DrawVertLine[blue, thick, opacity=0.5]{m211}{m261}
+\DrawVertLine[blue, thick, opacity=0.5]{m214}{m264}
+\DrawVertLine[blue, thick, opacity=0.5]{m217}{m267}
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+Cover additional columns that are set in row 0 (i.e. 3 and 6), as well as rows 1, 2, 4, and 5  (conflict with row 0).
+
+However, column~1 is now empty, although it has not been selected yet. BACKTRACKING: we uncover rows 5, 4, 2, and 1, as well as columns 6 and 3.
+\end{minipage}
+
+\vspace{1em}
+
+
+\begin{minipage}{.5\linewidth}
+$\begin{matrix}r_0\\ r_1\\ r_2\\ r_3\\ r_4\\ r_5\end{matrix}
+\begin{bmatrix}
+\tikzmark{m311}1 & 0 & 0 & \tikzmark{m314}1 & 0 & 0 & \tikzmark{m317}1 \\
+\tikzmark{m321}1 & 0 & 0 & 1 & 0 & 0 & \tikzmark{m327}0 \\
+\tikzmark{m331}0 & 0 & 0 & 1 & 1 & 0 & \tikzmark{m337}1 \\
+0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+\tikzmark{m351}0 & 1 & 1 & 0 & 0 & 1 & \tikzmark{m357}1 \\
+\tikzmark{m361}0 & 1 & 0 & \tikzmark{m364}0 & 0 & 0 & \tikzmark{m367}1 
+\end{bmatrix}$
+\DrawHorLine[red, thick, opacity=0.5]{m321}{m327}
+\DrawHorLine[black, thick, opacity=0.5]{m311}{m317}
+\DrawHorLine[black, thick, opacity=0.5]{m331}{m337}
+\DrawVertLine[blue, thick, opacity=0.5]{m311}{m361}
+\DrawVertLine[blue, thick, opacity=0.5]{m314}{m364}
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+Selecting row 1 (as part of the solution).
+
+Cover additional columns that are set in row 1 (i.e. column 3), as well as rows 0 and 3 (conflict with row 1).
+\end{minipage}
+
+\vspace{1em}
+
+
+\begin{minipage}{.5\linewidth}
+$\begin{matrix}r_0\\ r_1\\ r_2\\ r_3\\ r_4\\ r_5\end{matrix}
+\begin{bmatrix}
+\tikzmark{m411}1 & 0 & \tikzmark{m413} 0 & \tikzmark{m414}1 & \tikzmark{m415} 0 & \tikzmark{m416} 0 & \tikzmark{m417}1 \\
+\tikzmark{m421}1 & 0 & 0 & 1 & 0 & 0 & \tikzmark{m427}0 \\
+\tikzmark{m431}0 & 0 & 0 & 1 & 1 & 0 & \tikzmark{m437}1 \\
+\tikzmark{m441}0 & 0 & 1 & 0 & 1 & 1 & \tikzmark{m447}0 \\
+\tikzmark{m451}0 & 1 & 1 & 0 & 0 & 1 & \tikzmark{m457}1 \\
+\tikzmark{m461}0 & 1 & \tikzmark{m463} 0 & \tikzmark{m464}0 & \tikzmark{m465} 0 & \tikzmark{m466} 0 & \tikzmark{m467}1 
+\end{bmatrix}$
+\DrawHorLine[red, thick, opacity=0.5]{m421}{m427}
+\DrawHorLine[black, thick, opacity=0.5]{m411}{m417}
+\DrawHorLine[black, thick, opacity=0.5]{m431}{m437}
+\DrawHorLine[black, thick, opacity=0.5]{m451}{m457}
+\DrawHorLine[red, thick, opacity=0.5]{m441}{m447}
+\DrawVertLine[blue, thick, opacity=0.5]{m411}{m461}
+\DrawVertLine[blue, thick, opacity=0.5]{m414}{m464}
+\DrawVertLine[blue, thick, opacity=0.5]{m413}{m463}
+\DrawVertLine[blue, thick, opacity=0.5]{m415}{m465}
+\DrawVertLine[blue, thick, opacity=0.5]{m416}{m466}
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+Recursing on the resulting matrix: cover row 3, as part of the solution.
+
+Cover columns that are set in row 3 (i.e. 2, 4, 5), as well as row 4 (conflicts with row 3).
+\end{minipage}
+
+\vspace{1em}
+
+\begin{minipage}{.5\linewidth}
+$\begin{matrix}r_0\\ r_1\\ r_2\\ r_3\\ r_4\\ r_5\end{matrix}
+\begin{bmatrix}
+\tikzmark{m411}1 & \tikzmark{m412} 0 & \tikzmark{m413} 0 & \tikzmark{m414}1 & \tikzmark{m415} 0 & \tikzmark{m416} 0 & \tikzmark{m417}1 \\
+\tikzmark{m421}1 & 0 & 0 & 1 & 0 & 0 & \tikzmark{m427}0 \\
+\tikzmark{m431}0 & 0 & 0 & 1 & 1 & 0 & \tikzmark{m437}1 \\
+\tikzmark{m441}0 & 0 & 1 & 0 & 1 & 1 & \tikzmark{m447}0 \\
+\tikzmark{m451}0 & 1 & 1 & 0 & 0 & 1 & \tikzmark{m457}1 \\
+\tikzmark{m461}0 & \tikzmark{m462} 1 & \tikzmark{m463} 0 & \tikzmark{m464}0 & \tikzmark{m465} 0 & \tikzmark{m466} 0 & \tikzmark{m467}1 
+\end{bmatrix}$
+\DrawHorLine[red, thick, opacity=0.5]{m421}{m427}
+\DrawHorLine[black, thick, opacity=0.5]{m411}{m417}
+\DrawHorLine[black, thick, opacity=0.5]{m431}{m437}
+\DrawHorLine[red, thick, opacity=0.5]{m441}{m447}
+\DrawHorLine[red, thick, opacity=0.5]{m461}{m467}
+\DrawHorLine[black, thick, opacity=0.5]{m451}{m457}
+\DrawVertLine[blue, thick, opacity=0.5]{m411}{m461}
+\DrawVertLine[blue, thick, opacity=0.5]{m414}{m464}
+\DrawVertLine[blue, thick, opacity=0.5]{m413}{m463}
+\DrawVertLine[blue, thick, opacity=0.5]{m415}{m465}
+\DrawVertLine[blue, thick, opacity=0.5]{m416}{m466}
+\DrawVertLine[blue, thick, opacity=0.5]{m412}{m462}
+\DrawVertLine[blue, thick, opacity=0.5]{m417}{m467}
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+Recursing on the resulting matrix. Cover row 5 (as part of the solution).
+
+Cover columns 1 and 6, that are set in row 5.
+
+
+\end{minipage}
+
+\vspace{1em}
+
+\begin{minipage}{.5\linewidth}
+$\begin{matrix}r_0\\ r_1\\ r_2\\ r_3\\ r_4\\ r_5\end{matrix}
+\begin{bmatrix}
+\tikzmark{m411}1 & \tikzmark{m412} 0 & \tikzmark{m413} 0 & \tikzmark{m414}1 & \tikzmark{m415} 0 & \tikzmark{m416} 0 & \tikzmark{m417}1 \\
+\tikzmark{m421}1 & 0 & 0 & 1 & 0 & 0 & \tikzmark{m427}0 \\
+\tikzmark{m431}0 & 0 & 0 & 1 & 1 & 0 & \tikzmark{m437}1 \\
+\tikzmark{m441}0 & 0 & 1 & 0 & 1 & 1 & \tikzmark{m447}0 \\
+\tikzmark{m451}0 & 1 & 1 & 0 & 0 & 1 & \tikzmark{m457}1 \\
+\tikzmark{m461}0 & \tikzmark{m462} 1 & \tikzmark{m463} 0 & \tikzmark{m464}0 & \tikzmark{m465} 0 & \tikzmark{m466} 0 & \tikzmark{m467}1 
+\end{bmatrix}$
+\DrawHorLine[red, thick, opacity=0.5]{m421}{m427}
+\DrawHorLine[black, thick, opacity=0.5]{m411}{m417}
+\DrawHorLine[black, thick, opacity=0.5]{m431}{m437}
+\DrawHorLine[red, thick, opacity=0.5]{m441}{m447}
+\DrawHorLine[red, thick, opacity=0.5]{m461}{m467}
+\DrawHorLine[black, thick, opacity=0.5]{m451}{m457}
+\DrawVertLine[black, thick, opacity=0.5]{m411}{m461}
+\DrawVertLine[black, thick, opacity=0.5]{m414}{m464}
+\DrawVertLine[black, thick, opacity=0.5]{m413}{m463}
+\DrawVertLine[black, thick, opacity=0.5]{m415}{m465}
+\DrawVertLine[black, thick, opacity=0.5]{m416}{m466}
+\DrawVertLine[black, thick, opacity=0.5]{m412}{m462}
+\DrawVertLine[black, thick, opacity=0.5]{m417}{m467}
+\end{minipage}
+\begin{minipage}{.45\linewidth}
+Recursing: the remaining matrix is empty. Success!
+\end{minipage}
+\vspace{1em}
+
+
+{\bf Note:} an exact cover is best implemented by representing the matrix as a net of linked (vertical and horizontal) lists: rows and columns are covered by calling the  {\sc Delete}$( x )$ function on the corresponding data nodes,  and backtracking to a former state of the matrix is easily accomplished through the {\sc Restore}$(x)$ function.
+
+\section{A standard exact cover problem: Pentomino}
+
+The Pentomino is a tiling problem involving
+\begin{itemize}
+\item 12 different tiles, each of them covering 5 cells
+\item a $6x10$ grid
+\end{itemize}
+
+The following is one of the many solutions to the Pentomino problem:
+\vspace{1em}
+
+\begin{center}
+\includegraphics[width=.4\linewidth]{pentominoes6x10.png}
+\end{center}
+
+\vspace{1em}
+
+Design the exact cover matrix for the Pentomino problem:
+\begin{itemize}
+	\item what should be represented by its columns?
+	\item what should each row of the matrix represent?
+	\item what is a solution to the problem?
+\end{itemize}
+
+\paragraph{Answer:} A solution to the Pentomino problem meets the following constraints:
+	(1) Each one of the 12 tiles have been used.
+	(2) Each one the 60 cells in the grid are covered by exactly one tile.
+	(3) No tile can be in 2 distinct positions.
+
+From these constraints, we can derive for an exact cover matrix with 72 columns:
+\begin{itemize}
+	\item each one of the first 12 columns represents a tile: column 1 for tile 1, column 2 for tile 2, \ldots, column 12 for tile 12.
+	\item each one of the subsequent 60 columns represents a cell in the grid: column 13 for position (1,1), column 14 for position (1,2), \ldots, column 72 for position (6,10).
+\end{itemize}
+
+Each row in the matrix represents a way to insert a given tile on the grid. For instance, placing the "I"-tile ({\footnotesize \begin{tabular}{|c|c|c|c|c|}\hline\hspace{1em}&\hspace{1em}&\hspace{1em}&\hspace{1em}&\hspace{1em}\\\hline\end{tabular}}) vertically in the top left corner is represented by a row where the following columns are set to 1:
+\begin{itemize}
+	\item 1 (assuming that column 1 has been chosen to represent the "I"-tile)
+	\item 13, 23, 33, 43, 53 -corresponding to positions (1,1), (2,1),(3,1),(4,1),(5,1) on the grid
+\end{itemize}
+
+A solution to the problem is a list of rows that selects exactly one 1 in each column of the matrix:
+	\begin{itemize}
+	\item this ensures that constraint (1) is met, since each one of the first 12 columns is eventually covered
+	\item because exactly 1 row is selected for any given tile, constraint (3) is also met
+	\item because exactly 1 row is selected for any given grid position, the solution assigns exactly 1 tile to this position, ensuring that constraint (2) is met
+	\end{itemize}
+
+
+Sudoku puzzles are also instances of the standard exact cover problem. Designing the matrix suitable for solving sudokus is left as an exercise to the reader.
+
+\section{A generalized exact cover problem: 8-Queens}
+
+Design the exact cover matrix for the 8-Queen problem.
+
+\paragraph{Answer:} The 8-Queen problem is a generalization of the standard exact cover problem. The matrix has 2 sets of columns:
+\begin{itemize}
+\item The first 16 columns represent rank (columns 1 through 8)  and file (columns 9 through 16) positions for a given queen
+\item The next 30 columns represent the up (first 15 columns) and down (next 15 columns) diagonals covered by a queen in the position coded by this row
+\end{itemize}
+
+Why is this a generalized exact cover problem? Each row in the matrix represents a way to place a single queen on the board. The solution set of rows has 8 elements, one for each queen. The first 16 columns are {\em primary} columns, to which the usual constraint applies: since the solution set of rows contains {\em exactly} one 1 for each of these columns, we are ensured that each queen is on its own row and column.  The 30 diagonals columns are {\em secondary} columns: for those, the row selection constraint can be relaxed, so that {\em at most} one 1 can be selected for each  column. This ensures that no two queens in different positions cover the same diagonal, without introducing the extra, undue requirement that each diagonal  be covered by a queen: the algorithm might terminate with some diagonal columns still uncovered.
+
+
+
+\end{document}

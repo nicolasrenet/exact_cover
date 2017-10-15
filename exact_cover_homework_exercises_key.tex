@@ -1,0 +1,484 @@
+\documentclass[table]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{manfnt,amsmath,amsfonts}
+\usepackage{clrscode3e,latexsym}
+\usepackage{graphicx,subfig}
+\usepackage[margin=.7in]{geometry}
+\usepackage{tikz}
+\usepackage{enumitem,booktabs,array,xcolor}
+\usepackage{beton}
+\usepackage{euler}
+\usepackage{kbordermatrix}
+
+
+\newcommand{\tikzmark}[2]{\tikz[overlay,remember picture,baseline] \node [anchor=base] (#1) {$#2$};}
+
+\newcommand{\DrawHorLine}[3][]{%
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[#1] (#2.west) -- (#3.east);
+  \end{tikzpicture}
+}
+
+\newcommand{\DrawVertLine}[3][]{%
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[#1] (#2.north) -- (#3.south);
+  \end{tikzpicture}
+}
+
+
+\title{Homework \#8: Exact Cover Problems: key}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Regular Exact Cover problem}
+
+Use backtracking to solve the following exact cover problem, that is: {\bf is there a set of rows containing exactly one $1$ in each column?}
+\vspace{1em}
+
+%We use the following recursive procedure, where $A$ is a Boolean matrix, and $S$ is the solution set of rows:
+%\vspace{1em}
+%
+%\fbox{\begin{minipage}{.9\linewidth}\begin{codebox}
+%	\Procname{$\proc{ExactCover}(A, S)$}
+%	\li \If $A$ is empty
+%	\li	\Then \Return Success
+%	    \End
+%	\li \If $A$ has a $0$ column
+%	\li	\Then \Return Fail
+%	    \End
+%	\li Select column $c$ with least number of $1$s	
+%	\li	\For each row $r$ such that $A[r,c]==1$
+%	\li		\Do Add row $r$ to solution $S$
+%	\li		Cover all columns that are selected by row $r$, as well as all rows that conflict with $r$
+%	%\li		 \For each column $j$ such that $A[r,j]==1$
+%	%\li			\Do delete column $A[j]$ from $A$
+%	%\li			\For each row $i$ such that $A[i,j]==1$
+%	%\li				\Do delete row $A[i]$ from $A$
+%	%			\End
+%	%		\End
+%	\zi		\Comment Recursively search reduced matrix $A$
+%	\li		$\proc{ExactCover}(A)$
+%	\zi		\Comment Partial solutions that include row $r$ have been explored:
+%	\zi		\Comment backtracking before trying another row
+%	\li		Restore previously deleted rows and columns
+%	\li		Remove row  $r$  from solution $S$
+%		\End
+%	
+%	\zi		\Comment Solutions obtained by selecting column $c$ have been explored:
+%	\zi		\Comment backtracking before trying another column
+%	\li Restore column $c$ in matrix $A$
+%\end{codebox}\end{minipage}}
+%
+\vspace{2em}
+
+\begin{minipage}{.5\linewidth}
+$\kbordermatrix{
+    & c_1 & c_2 & c_3 & c_4 & c_5 & c_6 & c_7 \\
+r_1 & \tikzmark{m111} 0 & \tikzmark{m112} 1 & \tikzmark{m113} 1 & \tikzmark{m114} 1 & \tikzmark{m115} 0 & \tikzmark{m116} 0 & \tikzmark{m117} 1 \\
+r_2 & \tikzmark{m121} 0 & 1 & 0 & 1 & 1 & 1 & \tikzmark{m127} 0 \\
+r_3 & \tikzmark{m131} 0 & 0 & 1 & 0 & 0 & 1 & \tikzmark{m137} 1 \\
+r_4 & \tikzmark{m141} 1 & 1 & 0 & 1 & 1 & 0 & \tikzmark{m147} 1 \\
+r_5 & \tikzmark{m151} 0 & 0 & 0 & 0 & 1 & 0 & \tikzmark{m157} 0 \\
+r_6 & \tikzmark{m161} 1 & 0 & 0 & 0 & 0 & 0 & \tikzmark{m167} 0 \\
+r_7 & \tikzmark{m171} 1 & \tikzmark{m172} 1 & \tikzmark{m173} 0 & \tikzmark{m174} 1 & \tikzmark{m175} 0 & \tikzmark{m176} 0 & \tikzmark{m177} 0 
+}$
+\DrawHorLine[red, thick, opacity=0.5]{m111}{m117}
+
+\DrawVertLine[blue, thick, opacity=0.5]{m113}{m173}
+\end{minipage}
+\begin{minipage}{.4\linewidth}
+Initial move: choose column 3, select row 1 (as part of the solution)
+
+\end{minipage}
+
+\vspace{1em}
+
+\begin{minipage}{.5\linewidth}
+$\kbordermatrix{
+    & c_1 & c_2 & c_3 & c_4 & c_5 & c_6 & c_7 \\
+r_1 & \tikzmark{m211} 0 & \tikzmark{m212} 1 & \tikzmark{m213} 1 & \tikzmark{m214} 1 & \tikzmark{m215} 0 & \tikzmark{m216} 0 & \tikzmark{m217} 1 \\
+r_2 & \tikzmark{m221} 0 & 1 & 0 & 1 & 1 & 1 & \tikzmark{m227} 0 \\
+r_3 & \tikzmark{m231} 0 & 0 & 1 & 0 & 0 & 1 & \tikzmark{m237} 1 \\
+r_4 & \tikzmark{m241} 1 & 1 & 0 & 1 & 1 & 0 & \tikzmark{m247} 1 \\
+r_5 & \tikzmark{m251} 0 & 0 & 0 & 0 & 1 & 0 & \tikzmark{m257} 0 \\
+r_6 & \tikzmark{m261} 1 & 0 & 0 & 0 & 0 & 0 & \tikzmark{m267} 0 \\
+r_7 & \tikzmark{m271} 1 & \tikzmark{m272} 1 & \tikzmark{m273} 0 & \tikzmark{m274} 1 & \tikzmark{m275} 0 & \tikzmark{m276} 0 & \tikzmark{m277} 0 
+}$
+
+\DrawHorLine[red, thick, opacity=0.5]{m211}{m217}
+
+\DrawHorLine[black, thick, opacity=0.5]{m221}{m227}
+\DrawHorLine[black, thick, opacity=0.5]{m231}{m237}
+\DrawHorLine[black, thick, opacity=0.5]{m241}{m247}
+\DrawHorLine[black, thick, opacity=0.5]{m271}{m277}
+
+\DrawVertLine[blue, thick, opacity=0.5]{m212}{m272}
+\DrawVertLine[blue, thick, opacity=0.5]{m213}{m273}
+\DrawVertLine[blue, thick, opacity=0.5]{m214}{m274}
+\DrawVertLine[blue, thick, opacity=0.5]{m217}{m277}
+\end{minipage}
+\begin{minipage}{.4\linewidth}
+Cover additional columns set in row 1 (cols 2, 4, and 7), as well as conflicting rows 2, 3, 4, and 7.
+
+DEAD END! Column 6 has not been set yet, but all rows have been removed. Backtracking...
+\end{minipage}
+
+\vspace{1em}
+
+\begin{minipage}{.5\linewidth}
+$\kbordermatrix{
+    & c_1 & c_2 & c_3 & c_4 & c_5 & c_6 & c_7 \\
+r_1 & \tikzmark{m311} 0 & \tikzmark{m312} 1 & \tikzmark{m313} 1 & \tikzmark{m314} 1 & \tikzmark{m315} 0 & \tikzmark{m316} 0 & \tikzmark{m317} 1 \\
+r_2 & \tikzmark{m321} 0 & 1 & 0 & 1 & 1 & 1 & \tikzmark{m327} 0 \\
+r_3 & \tikzmark{m331} 0 & 0 & 1 & 0 & 0 & 1 & \tikzmark{m337} 1 \\
+r_4 & \tikzmark{m341} 1 & 1 & 0 & 1 & 1 & 0 & \tikzmark{m347} 1 \\
+r_5 & \tikzmark{m351} 0 & 0 & 0 & 0 & 1 & 0 & \tikzmark{m357} 0 \\
+r_6 & \tikzmark{m361} 1 & 0 & 0 & 0 & 0 & 0 & \tikzmark{m367} 0 \\
+r_7 & \tikzmark{m371} 1 & \tikzmark{m372} 1 & \tikzmark{m373} 0 & \tikzmark{m374} 1 & \tikzmark{m375} 0 & \tikzmark{m376} 0 & \tikzmark{m377} 0 
+}$
+\DrawHorLine[red, thick, opacity=0.5]{m331}{m337}
+
+\DrawHorLine[black, thick, opacity=0.5]{m311}{m317}
+\DrawHorLine[black, thick, opacity=0.5]{m321}{m327}
+\DrawHorLine[black, thick, opacity=0.5]{m341}{m347}
+
+\DrawVertLine[blue, thick, opacity=0.5]{m313}{m373}
+\DrawVertLine[blue, thick, opacity=0.5]{m316}{m376}
+\DrawVertLine[blue, thick, opacity=0.5]{m317}{m377}
+
+\end{minipage}
+\begin{minipage}{.4\linewidth}
+Deselect row 1. From column 3, select row 3 instead.
+
+Cover additional columns set in row 3 (cols 6 and 7), as well as conflicting rows 1, 2, and 4.
+Recursing...
+\end{minipage}
+
+\vspace{1em}
+
+\begin{minipage}{.5\linewidth}
+$\kbordermatrix{
+    & c_1 & c_2 & c_3 & c_4 & c_5 & c_6 & c_7 \\
+r_1 & \tikzmark{m411} 0 & \tikzmark{m412} 1 & \tikzmark{m413} 1 & \tikzmark{m414} 1 & \tikzmark{m415} 0 & \tikzmark{m416} 0 & \tikzmark{m417} 1 \\
+r_2 & \tikzmark{m421} 0 & 1 & 0 & 1 & 1 & 1 & \tikzmark{m427} 0 \\
+r_3 & \tikzmark{m431} 0 & 0 & 1 & 0 & 0 & 1 & \tikzmark{m437} 1 \\
+r_4 & \tikzmark{m441} 1 & 1 & 0 & 1 & 1 & 0 & \tikzmark{m447} 1 \\
+r_5 & \tikzmark{m451} 0 & 0 & 0 & 0 & 1 & 0 & \tikzmark{m457} 0 \\
+r_6 & \tikzmark{m461} 1 & 0 & 0 & 0 & 0 & 0 & \tikzmark{m467} 0 \\
+r_7 & \tikzmark{m471} 1 & \tikzmark{m472} 1 & \tikzmark{m473} 0 & \tikzmark{m474} 1 & \tikzmark{m475} 0 & \tikzmark{m476} 0 & \tikzmark{m477} 0 
+}$
+
+\DrawHorLine[red, thick, opacity=0.5]{m431}{m437}
+\DrawHorLine[red, thick, opacity=0.5]{m471}{m477}
+
+\DrawHorLine[black, thick, opacity=0.5]{m411}{m417}
+\DrawHorLine[black, thick, opacity=0.5]{m421}{m427}
+\DrawHorLine[black, thick, opacity=0.5]{m441}{m447}
+\DrawHorLine[black, thick, opacity=0.5]{m461}{m467}
+
+\DrawVertLine[blue, thick, opacity=0.5]{m411}{m471}
+\DrawVertLine[blue, thick, opacity=0.5]{m412}{m472}
+\DrawVertLine[blue, thick, opacity=0.5]{m413}{m473}
+\DrawVertLine[blue, thick, opacity=0.5]{m414}{m474}
+\DrawVertLine[blue, thick, opacity=0.5]{m416}{m476}
+\DrawVertLine[blue, thick, opacity=0.5]{m417}{m477}
+
+\end{minipage}
+\begin{minipage}{.4\linewidth}
+Chose column 2, select row 7.
+
+ Cover additional columns set in row 4 (cols 1 and 4), as well as conflicting row 6.
+
+ Recursing...
+\end{minipage}
+
+\vspace{1em}
+
+\begin{minipage}{.5\linewidth}
+$\kbordermatrix{
+    & c_1 & c_2 & c_3 & c_4 & c_5 & c_6 & c_7 \\
+r_1 & \tikzmark{m511} 0 & \tikzmark{m512} 1 & \tikzmark{m513} 1 & \tikzmark{m514} 1 & \tikzmark{m515} 0 & \tikzmark{m516} 0 & \tikzmark{m517} 1 \\
+r_2 & \tikzmark{m521} 0 & 1 & 0 & 1 & 1 & 1 & \tikzmark{m527} 0 \\
+r_3 & \tikzmark{m531} 0 & 0 & 1 & 0 & 0 & 1 & \tikzmark{m537} 1 \\
+r_4 & \tikzmark{m541} 1 & 1 & 0 & 1 & 1 & 0 & \tikzmark{m547} 1 \\
+r_5 & \tikzmark{m551} 0 & 0 & 0 & 0 & 1 & 0 & \tikzmark{m557} 0 \\
+r_6 & \tikzmark{m561} 1 & 0 & 0 & 0 & 0 & 0 & \tikzmark{m567} 0 \\
+r_7 & \tikzmark{m571} 1 & \tikzmark{m572} 1 & \tikzmark{m573} 0 & \tikzmark{m574} 1 & \tikzmark{m575} 0 & \tikzmark{m576} 0 & \tikzmark{m577} 0 
+}$
+
+\DrawHorLine[red, thick, opacity=0.5]{m531}{m537}
+\DrawHorLine[red, thick, opacity=0.5]{m551}{m557}
+\DrawHorLine[red, thick, opacity=0.5]{m571}{m577}
+
+\DrawHorLine[black, thick, opacity=0.5]{m511}{m517}
+\DrawHorLine[black, thick, opacity=0.5]{m521}{m527}
+\DrawHorLine[black, thick, opacity=0.5]{m541}{m547}
+\DrawHorLine[black, thick, opacity=0.5]{m561}{m567}
+
+\DrawVertLine[blue, thick, opacity=0.5]{m511}{m571}
+\DrawVertLine[blue, thick, opacity=0.5]{m512}{m572}
+\DrawVertLine[blue, thick, opacity=0.5]{m513}{m573}
+\DrawVertLine[blue, thick, opacity=0.5]{m514}{m574}
+\DrawVertLine[blue, thick, opacity=0.5]{m515}{m575}
+\DrawVertLine[blue, thick, opacity=0.5]{m516}{m576}
+\DrawVertLine[blue, thick, opacity=0.5]{m517}{m577}
+
+\end{minipage}
+\begin{minipage}{.4\linewidth}
+Chose column 5, add row 5 to the solution.
+
+SUCCESS!
+\end{minipage}
+
+\vspace{1em}
+
+
+\section{Generalized Exact Cover problem}
+
+Solve this generalized exact cover problem, that is: {\bf Is there a set of rows containing {\em exactly one} $1$ in each primary column} ($c_1$ through $c_5$), and {\bf {\em at most one} $1$ in each secondary column} ($c_6$ and $c_7$)?
+
+\begin{minipage}{.5\linewidth}
+$\kbordermatrix{
+    &{\mathbf c_1} & {\mathbf c_2} & {\mathbf c_3} & {\mathbf c_4} & {\mathbf c_5} & c_6 & c_7\\
+r_1 & \tikzmark{m111}{\mathbf 0} &\tikzmark{m112}{\mathbf 0} &\tikzmark{m113}{\mathbf 1} &\tikzmark{m114}{\mathbf 0} &\tikzmark{m115}{\mathbf 0} &\tikzmark{m116} 1 &\tikzmark{m117} 0 \\
+r_2 & \tikzmark{m121}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m127} 0 \\
+r_3 & \tikzmark{m131}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} & 0 & \tikzmark{m137} 0 \\
+r_4 & \tikzmark{m141}{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & \tikzmark{m147} 1 \\
+r_5 & \tikzmark{m151}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} & 1 & \tikzmark{m157} 0 \\
+r_6 & \tikzmark{m161}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m167} 1 \\ 
+r_7 & \tikzmark{m171}{\mathbf 1} &\tikzmark{m172}{\mathbf 0} &\tikzmark{m173}{\mathbf 1} &\tikzmark{m174}{\mathbf 1} &\tikzmark{m175}{\mathbf 0} &\tikzmark{m176} 0 &\tikzmark{m177} 1 
+}$
+
+\DrawHorLine[red, thick, opacity=0.5]{m141}{m147}
+
+\DrawVertLine[blue, thick, opacity=0.5]{m111}{m171}
+
+
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+
+Initial move: choosing column 1, and selecting row 4, as part of the solution.
+
+
+\end{minipage}
+
+\begin{minipage}{.5\linewidth}
+$\kbordermatrix{
+    &{\mathbf c_1} & {\mathbf c_2} & {\mathbf c_3} & {\mathbf c_4} & {\mathbf c_5} & c_6 & c_7\\
+r_1 & \tikzmark{m211}{\mathbf 0} &\tikzmark{m212}{\mathbf 0} &\tikzmark{m213}{\mathbf 1} &\tikzmark{m214}{\mathbf 0} &\tikzmark{m215}{\mathbf 0} &\tikzmark{m216} 1 &\tikzmark{m217} 0 \\
+r_2 & \tikzmark{m221}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m227} 0 \\
+r_3 & \tikzmark{m231}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} & 0 & \tikzmark{m237} 0 \\
+r_4 & \tikzmark{m241}{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & \tikzmark{m247} 1 \\
+r_5 & \tikzmark{m251}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} & 1 & \tikzmark{m257} 0 \\
+r_6 & \tikzmark{m261}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m267} 1 \\ 
+r_7 & \tikzmark{m271}{\mathbf 1} &\tikzmark{m272}{\mathbf 0} &\tikzmark{m273}{\mathbf 1} &\tikzmark{m274}{\mathbf 1} &\tikzmark{m275}{\mathbf 0} &\tikzmark{m276} 0 &\tikzmark{m277} 1 
+}$
+
+\DrawHorLine[red, thick, opacity=0.5]{m241}{m247}
+
+\DrawVertLine[blue, thick, opacity=0.5]{m211}{m271}
+\DrawVertLine[blue, thick, opacity=0.5]{m213}{m273}
+\DrawVertLine[blue, thick, opacity=0.5]{m217}{m277}
+
+
+\DrawHorLine[black, thick, opacity=0.5]{m211}{m217}
+\DrawHorLine[black, thick, opacity=0.5]{m261}{m267}
+\DrawHorLine[black, thick, opacity=0.5]{m271}{m277}
+
+
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+
+Cover additional columns that are set in row 4 (i.e. cols 3, and 7), as well as rows 1, 6, and 7 (conflict with row 4).
+
+\end{minipage}
+
+\begin{minipage}{.5\linewidth}
+$\kbordermatrix{
+    &{\mathbf c_1} & {\mathbf c_2} & {\mathbf c_3} & {\mathbf c_4} & {\mathbf c_5} & c_6 & c_7\\
+r_1 & \tikzmark{m311}{\mathbf 0} &\tikzmark{m312}{\mathbf 0} &\tikzmark{m313}{\mathbf 1} &\tikzmark{m314}{\mathbf 0} &\tikzmark{m315}{\mathbf 0} &\tikzmark{m316} 1 &\tikzmark{m317} 0 \\
+r_2 & \tikzmark{m321}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m327} 0 \\
+r_3 & \tikzmark{m331}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} & 0 & \tikzmark{m337} 0 \\
+r_4 & \tikzmark{m341}{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & \tikzmark{m347} 1 \\
+r_5 & \tikzmark{m351}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} & 1 & \tikzmark{m357} 0 \\
+r_6 & \tikzmark{m361}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m367} 1 \\ 
+r_7 & \tikzmark{m371}{\mathbf 1} &\tikzmark{m372}{\mathbf 0} &\tikzmark{m373}{\mathbf 1} &\tikzmark{m374}{\mathbf 1} &\tikzmark{m375}{\mathbf 0} &\tikzmark{m376} 0 &\tikzmark{m377} 1 
+}$
+
+\DrawHorLine[red, thick, opacity=0.5]{m331}{m337}
+\DrawHorLine[red, thick, opacity=0.5]{m341}{m347}
+
+\DrawVertLine[blue, thick, opacity=0.5]{m311}{m371}
+\DrawVertLine[blue, thick, opacity=0.5]{m312}{m372}
+\DrawVertLine[blue, thick, opacity=0.5]{m313}{m373}
+\DrawVertLine[blue, thick, opacity=0.5]{m314}{m374}
+\DrawVertLine[blue, thick, opacity=0.5]{m317}{m377}
+
+
+\DrawHorLine[black, thick, opacity=0.5]{m311}{m317}
+\DrawHorLine[black, thick, opacity=0.5]{m321}{m327}
+\DrawHorLine[black, thick, opacity=0.5]{m351}{m357}
+\DrawHorLine[black, thick, opacity=0.5]{m361}{m367}
+\DrawHorLine[black, thick, opacity=0.5]{m371}{m377}
+
+
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+
+Recursing: choosing column 2, and selecting row 3 (as part of the solution)
+
+Cover additional columns that are set in row 3 (i.e. cols 2 and 4), as well as rows 2 and 5 (conflict with row 3)
+
+DEAD END! Column 5 should be chosen now, but all rows in it have been deleted. Backtracking...
+
+\end{minipage}
+
+
+\begin{minipage}{.5\linewidth}
+$\kbordermatrix{
+    &{\mathbf c_1} & {\mathbf c_2} & {\mathbf c_3} & {\mathbf c_4} & {\mathbf c_5} & c_6 & c_7\\
+r_1 & \tikzmark{m411}{\mathbf 0} &\tikzmark{m412}{\mathbf 0} &\tikzmark{m413}{\mathbf 1} &\tikzmark{m414}{\mathbf 0} &\tikzmark{m415}{\mathbf 0} &\tikzmark{m416} 1 &\tikzmark{m417} 0 \\
+r_2 & \tikzmark{m421}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m427} 0 \\
+r_3 & \tikzmark{m431}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} & 0 & \tikzmark{m437} 0 \\
+r_4 & \tikzmark{m441}{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & \tikzmark{m447} 1 \\
+r_5 & \tikzmark{m451}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} & 1 & \tikzmark{m457} 0 \\
+r_6 & \tikzmark{m461}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m467} 1 \\ 
+r_7 & \tikzmark{m471}{\mathbf 1} &\tikzmark{m472}{\mathbf 0} &\tikzmark{m473}{\mathbf 1} &\tikzmark{m474}{\mathbf 1} &\tikzmark{m475}{\mathbf 0} &\tikzmark{m476} 0 &\tikzmark{m477} 1 
+}$
+
+\DrawHorLine[red, thick, opacity=0.5]{m441}{m447}
+\DrawHorLine[red, thick, opacity=0.5]{m451}{m457}
+
+\DrawVertLine[blue, thick, opacity=0.5]{m411}{m471}
+\DrawVertLine[blue, thick, opacity=0.5]{m412}{m472}
+\DrawVertLine[blue, thick, opacity=0.5]{m413}{m473}
+\DrawVertLine[blue, thick, opacity=0.5]{m415}{m475}
+\DrawVertLine[blue, thick, opacity=0.5]{m416}{m476}
+\DrawVertLine[blue, thick, opacity=0.5]{m417}{m477}
+
+
+\DrawHorLine[black, thick, opacity=0.5]{m411}{m417}
+\DrawHorLine[black, thick, opacity=0.5]{m421}{m427}
+\DrawHorLine[black, thick, opacity=0.5]{m431}{m437}
+\DrawHorLine[black, thick, opacity=0.5]{m461}{m467}
+\DrawHorLine[black, thick, opacity=0.5]{m471}{m477}
+
+
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+
+Deselect row 3 (and uncover corresponding columns and conflicting rows), select row 5 instead.
+
+Cover additional columns that are set in row 5 (cols 2, 5, and 6), as well as conflicting rows 2 and 3.
+
+DEAD END! Column 4 should be chosen now, but all rows in it have been deleted. Backtracking...
+\end{minipage}
+
+
+\begin{minipage}{.5\linewidth}
+$\kbordermatrix{
+    &{\mathbf c_1} & {\mathbf c_2} & {\mathbf c_3} & {\mathbf c_4} & {\mathbf c_5} & c_6 & c_7\\
+r_1 & \tikzmark{m511}{\mathbf 0} &\tikzmark{m512}{\mathbf 0} &\tikzmark{m513}{\mathbf 1} &\tikzmark{m514}{\mathbf 0} &\tikzmark{m515}{\mathbf 0} &\tikzmark{m516} 1 &\tikzmark{m517} 0 \\
+r_2 & \tikzmark{m521}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m527} 0 \\
+r_3 & \tikzmark{m531}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} & 0 & \tikzmark{m537} 0 \\
+r_4 & \tikzmark{m541}{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & \tikzmark{m547} 1 \\
+r_5 & \tikzmark{m551}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} & 1 & \tikzmark{m557} 0 \\
+r_6 & \tikzmark{m561}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m567} 1 \\ 
+r_7 & \tikzmark{m571}{\mathbf 1} &\tikzmark{m572}{\mathbf 0} &\tikzmark{m573}{\mathbf 1} &\tikzmark{m574}{\mathbf 1} &\tikzmark{m575}{\mathbf 0} &\tikzmark{m576} 0 &\tikzmark{m577} 1 
+}$
+
+\DrawHorLine[red, thick, opacity=0.5]{m571}{m577}
+
+\DrawHorLine[black, thick, opacity=0.5]{m511}{m517}
+\DrawHorLine[black, thick, opacity=0.5]{m521}{m527}
+\DrawHorLine[black, thick, opacity=0.5]{m531}{m537}
+\DrawHorLine[black, thick, opacity=0.5]{m541}{m547}
+\DrawHorLine[black, thick, opacity=0.5]{m561}{m567}
+
+\DrawVertLine[blue, thick, opacity=0.5]{m511}{m571}
+\DrawVertLine[blue, thick, opacity=0.5]{m513}{m573}
+\DrawVertLine[blue, thick, opacity=0.5]{m514}{m574}
+\DrawVertLine[blue, thick, opacity=0.5]{m517}{m577}
+
+
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+
+Deselect rows 5 and 4, and from column 1, select row 7 instead.
+
+Cover additional columns that are set in row 7 (cols 1, 3, 4, and 7), as well as conflicting rows 1, 2, 3, 4, 6.
+
+\end{minipage}
+
+
+\begin{minipage}{.5\linewidth}
+$\kbordermatrix{
+    &{\mathbf c_1} & {\mathbf c_2} & {\mathbf c_3} & {\mathbf c_4} & {\mathbf c_5} & c_6 & c_7\\
+r_1 & \tikzmark{m611}{\mathbf 0} &\tikzmark{m612}{\mathbf 0} &\tikzmark{m613}{\mathbf 1} &\tikzmark{m614}{\mathbf 0} &\tikzmark{m615}{\mathbf 0} &\tikzmark{m616} 1 &\tikzmark{m617} 0 \\
+r_2 & \tikzmark{m621}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m627} 0 \\
+r_3 & \tikzmark{m631}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} & 0 & \tikzmark{m637} 0 \\
+r_4 & \tikzmark{m641}{\mathbf 1} &{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} & 0 & \tikzmark{m647} 1 \\
+r_5 & \tikzmark{m651}{\mathbf 0} &{\mathbf 1} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} & 1 & \tikzmark{m657} 0 \\
+r_6 & \tikzmark{m661}{\mathbf 0} &{\mathbf 0} &{\mathbf 0} &{\mathbf 1} &{\mathbf 1} & 0 & \tikzmark{m667} 1 \\ 
+r_7 & \tikzmark{m671}{\mathbf 1} &\tikzmark{m672}{\mathbf 0} &\tikzmark{m673}{\mathbf 1} &\tikzmark{m674}{\mathbf 1} &\tikzmark{m675}{\mathbf 0} &\tikzmark{m676} 0 &\tikzmark{m677} 1 
+}$
+
+\DrawHorLine[red, thick, opacity=0.5]{m651}{m657}
+\DrawHorLine[red, thick, opacity=0.5]{m671}{m677}
+
+\DrawHorLine[black, thick, opacity=0.5]{m611}{m617}
+\DrawHorLine[black, thick, opacity=0.5]{m621}{m627}
+\DrawHorLine[black, thick, opacity=0.5]{m631}{m637}
+\DrawHorLine[black, thick, opacity=0.5]{m641}{m647}
+\DrawHorLine[black, thick, opacity=0.5]{m661}{m667}
+
+\DrawVertLine[blue, thick, opacity=0.5]{m611}{m671}
+\DrawVertLine[blue, thick, opacity=0.5]{m612}{m672}
+\DrawVertLine[blue, thick, opacity=0.5]{m613}{m673}
+\DrawVertLine[blue, thick, opacity=0.5]{m614}{m674}
+\DrawVertLine[blue, thick, opacity=0.5]{m615}{m675}
+\DrawVertLine[blue, thick, opacity=0.5]{m616}{m676}
+\DrawVertLine[blue, thick, opacity=0.5]{m617}{m677}
+
+
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+
+Recursing: choose column 2, and select row 5 (as part of the solution).
+
+Cover additional columns that are set in row 5 (cols 5 and 6).
+
+SUCCESS!
+
+\end{minipage}
+
+
+
+\section{A generalized exact cover problem: 8-Queen Problem}
+
+\paragraph{1.} Encode the 8-Queen Problem into a matrix of $0$s and $1$s suitable for a generalized  exact cover solution:  
+	\begin{itemize}
+		\item how many rows?
+		\item how many primary columns?
+		\item how many secondary columns?
+	\end{itemize}
+
+
+\paragraph{Answer:} The 8-Queen problem is a generalization of the standard exact cover problem. The matrix has 2 sets of columns:
+\begin{itemize}
+\item The first 16 columns represent rank (columns 1 through 8)  and file (columns 9 through 16) positions for a given queen
+\item The next 30 columns represent the up (first 15 columns) and down (next 15 columns) diagonals covered by a queen in the position coded by this row
+\end{itemize}
+
+\paragraph{2.} Show that the selection of rows that is a solution to the exact cover problem for your matrix is also a solution for the 8-Queen Problem.
+
+\paragraph{Answer:} Why is this a generalized exact cover problem? Each row in the matrix represents a way to place a single queen on the board. The solution set of rows has 8 elements, one for each queen. The first 16 columns are {\em primary} columns, to which the usual constraint applies: since the solution set of rows contains {\em exactly} one 1 for each of these columns, we are ensured that each queen is on its own row and column.  The 30 diagonals columns are {\em secondary} columns: for those, the row selection constraint can be relaxed, so that {\em at most} one 1 can be selected for each  column. This ensures that no two queens in different positions cover the same diagonal, without introducing the extra, undue requirement that each diagonal  be covered by a queen: the algorithm might terminate with some diagonal columns still uncovered.
+
+
+
+
+\end{document}
