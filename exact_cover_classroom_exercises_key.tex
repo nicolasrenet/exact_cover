@@ -54,7 +54,7 @@ r_6 &\tikzmark{m161}0 & \tikzmark{m162} 1 & \tikzmark{m163} 0 & \tikzmark{m164}0
 
 \end{minipage}
 \begin{minipage}{.45\linewidth}
-Initial configuration: in column 1, selecting row 1, as part of the solution.
+Initial move: among columns that have the least number of 1s, column 1 is the leftmost: we choose column 1, then, and select the first row with a 1, i.e. row 1, as part of the solution.
 \end{minipage}
 
 \vspace{1em}
@@ -108,7 +108,7 @@ r_6 & \tikzmark{m361}0 & 1 & 0 & \tikzmark{m364}0 & 0 & 0 & \tikzmark{m367}1
 \DrawVertLine[blue, thick, opacity=0.5]{m314}{m364}
 \end{minipage}
 \begin{minipage}{.45\linewidth}
-Selecting row 2 (as part of the solution).
+Still from column 1, select row 2 (as part of the solution).
 
 Cover additional columns that are set in row 2 (i.e. column 4), as well as rows 1 and 4 (conflict with row 2).
 \end{minipage}
@@ -138,7 +138,7 @@ r_6 & \tikzmark{m461}0 & 1 & \tikzmark{m463} 0 & \tikzmark{m464}0 & \tikzmark{m4
 \DrawVertLine[blue, thick, opacity=0.5]{m416}{m466}
 \end{minipage}
 \begin{minipage}{.45\linewidth}
-Recursing on the resulting matrix: cover row 4, as part of the solution.
+Recursing on the reduced matrix: column 5 has the least number of 1s; from column 5, select row 4, as part of the solution.
 
 Cover columns that are set in row 4 (i.e. 3, 5, 6), as well as row 5 (conflicts with row 4).
 \end{minipage}
@@ -171,9 +171,9 @@ r_6 & \tikzmark{m461}0 & \tikzmark{m462} 1 & \tikzmark{m463} 0 & \tikzmark{m464}
 \DrawVertLine[blue, thick, opacity=0.5]{m417}{m467}
 \end{minipage}
 \begin{minipage}{.45\linewidth}
-Recursing on the resulting matrix. Cover row 6 (as part of the solution).
+Recursing on the reduced matrix, that has only 1 row. Choose column 2 (least number of 1s, leftmost), select row 6 (as part of the solution).
 
-Cover columns 2 and 7, that are set in row 6.
+Cover additional column 7, that is set in row 6.
 
 
 \end{minipage}
@@ -206,7 +206,7 @@ r_6 & \tikzmark{m461}0 & \tikzmark{m462} 1 & \tikzmark{m463} 0 & \tikzmark{m464}
 \DrawVertLine[black, thick, opacity=0.5]{m417}{m467}
 \end{minipage}
 \begin{minipage}{.45\linewidth}
-Recursing: the remaining matrix is empty. Success!
+Recursing: the reduced matrix is empty. Success!
 \end{minipage}
 \vspace{1em}
 
@@ -244,7 +244,7 @@ r_6 & \tikzmark{m161} {\mathbf 0} & \tikzmark{m162}{\mathbf 0} & \tikzmark{m163}
 
 \end{minipage}
 \begin{minipage}{.45\linewidth}
-Initial configuration: in column 1, selecting row 1, as part of the solution.
+Initial move: among columns that have the least number of 1s, column 1 is the leftmost: we choose column 1, then select row 1, as part of the solution.
 \end{minipage}
 \vspace{1em}
 
@@ -295,15 +295,18 @@ r_6 & \tikzmark{m361}{\mathbf 0} & \tikzmark{m362}{\mathbf 0} & \tikzmark{m363}{
 \DrawHorLine[black, thick, opacity=0.5]{m351}{m357}
 \DrawHorLine[black, thick, opacity=0.5]{m361}{m367}
 \DrawVertLine[blue, thick, opacity=0.5]{m311}{m361}
+\DrawVertLine[blue, thick, opacity=0.5]{m312}{m362}
 \DrawVertLine[blue, thick, opacity=0.5]{m313}{m363}
+\DrawVertLine[blue, thick, opacity=0.5]{m314}{m364}
+\DrawVertLine[blue, thick, opacity=0.5]{m315}{m365}
 \DrawVertLine[blue, thick, opacity=0.5]{m317}{m367}
 \end{minipage}
 \begin{minipage}{.45\linewidth}
-Select row~4. 
+Recursing on the reduced matrix: chose leftmost column that has the least number of 1s, i.e. column~2. From column 2, select row~4. 
 
-Cover additional columns that are set in row 4 (cols 2, 4, and 5).
+Cover additional columns that are set in row 4 (cols 4 and 5).
 
-The resulting matrix is empty. Success!
+The reduced matrix is empty. SUCCESS!
 
 \end{minipage}
 
@@ -340,7 +343,7 @@ Design the exact cover matrix for the Pentomino problem:
 
 \paragraph{Answer:} A solution to the Pentomino problem meets the following constraints:
 	(1) Each one of the 12 tiles have been used.
-	(2) Each one the 60 cells in the grid are covered by exactly one tile.
+	(2) Each one the 60 cells in the grid are covered by exactly one tile: put otherwise, neither overlapping pieces, nor uncovered positions
 	(3) No tile can be in 2 distinct positions.
 
 From these constraints, we can derive for an exact cover matrix with 72 columns:

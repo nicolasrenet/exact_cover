@@ -478,7 +478,7 @@ class ExactCover_UnitTest( unittest.TestCase ):
 			self.print_matrix( matrix )
 			for r in range(0,ROWS):
 				while matrix[r] == [0]*COLS:
-					matrix[r]  = [ random.choice( (0,1) ) for el in range(0, COLS ) ]
+					matrix[r]  = [ random.choice( (0,0,1) ) for el in range(0, COLS ) ]
 
 		return(matrix)
 
@@ -534,6 +534,15 @@ class ExactCover_UnitTest( unittest.TestCase ):
 			[0, 0, 0, 1, 1, 0, 1],
 			[1, 0, 1, 1, 0, 0, 1]]
 
+	matrix_exam_3 = [[0, 1, 0, 0, 1, 1, 1, 0],
+[0, 1, 1, 1, 0, 0, 0, 1],
+[1, 0, 1, 0, 0, 0, 0, 0],
+[0, 0, 1, 1, 1, 0, 0, 1],
+[0, 1, 1, 0, 1, 1, 1, 0],
+[0, 1, 0, 0, 0, 1, 0, 0],
+[1, 0, 0, 1, 0, 0, 0, 1],
+[0, 1, 1, 0, 0, 0, 1, 1]]
+	
 	def atest_search_1(self):
 			
 		ec = ExactCover()
@@ -552,7 +561,7 @@ class ExactCover_UnitTest( unittest.TestCase ):
 	
 		self.assertTrue( ec.solve(7) == 2)
 
-	def test_search_3(self):
+	def atest_search_3(self):
 			
 		ec = ExactCover()
 		ec.matrix = self.matrix3
@@ -561,7 +570,7 @@ class ExactCover_UnitTest( unittest.TestCase ):
 	
 		self.assertTrue( ec.solve(7) == 1)
 
-	def atest_search_4(self):
+	def aatest_search_4(self):
 			
 		ec = ExactCover()
 		ec.matrix = self.matrix4
@@ -570,7 +579,7 @@ class ExactCover_UnitTest( unittest.TestCase ):
 	
 		self.assertTrue( ec.solve(7) == 1)
 
-	def test_search_5(self):
+	def atest_search_5(self):
 			
 		ec = ExactCover(5)
 		ec.matrix = self.matrix5
@@ -579,7 +588,7 @@ class ExactCover_UnitTest( unittest.TestCase ):
 	
 		self.assertTrue( ec.solve(7) == 1)
 
-	def test_search_6(self):
+	def atest_search_6(self):
 			
 		ec = ExactCover(5)
 		ec.matrix = self.matrix6
@@ -588,18 +597,31 @@ class ExactCover_UnitTest( unittest.TestCase ):
 	
 		self.assertTrue( ec.solve(7) == 1)
 
+	def test_exam_3(self):
+		
+		ec = ExactCover()
+		ec.matrix = self.matrix_exam_3
+		self.print_matrix( ec.matrix)
+		ec.build_links()
+	
+		self.assertTrue( ec.solve(8) == 1)
+
+
+
 	def atest_search_2(self):
 
 		for trial in range(1,10):
 			
-			matrix = self.random_matrix(7,7,5)
+			matrix = self.random_matrix(8,8,8)
 			print("\n\n====== Starting test {}:".format( trial))		
 			self.print_matrix( matrix)
-			ec = ExactCover(5)
+			ec = ExactCover()
 			ec.matrix = matrix
 			ec.build_links()
 	
-			ec.solve(7, False)
+			ec.solve(8, False)
+
+	
 
 def main():
         unittest.main()

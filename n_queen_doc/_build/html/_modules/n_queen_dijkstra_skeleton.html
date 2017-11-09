@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>n_queen_dijkstra_skeleton &mdash; N-Queen 1.0 documentation</title>
+    <title>n_queen_dijkstra_skeleton &#8212; N-Queen 1.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,12 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="N-Queen 1.0 documentation" href="../index.html" />
     <link rel="up" title="Module code" href="index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -37,18 +39,18 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">N-Queen 1.0 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">N-Queen 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for n_queen_dijkstra_skeleton</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/python3</span>
+<span></span><span class="ch">#!/usr/bin/python3</span>
 
 <span class="kn">import</span> <span class="nn">unittest</span>
 
@@ -72,14 +74,14 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
 	<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-		<span class="n">row_string_array</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&#39;&#39;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">]</span>
+		<span class="n">row_string_array</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;&#39;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">]</span>
 		<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
 			<span class="k">if</span> <span class="n">qc</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">==</span> <span class="n">col</span><span class="p">:</span>
-				<span class="n">row_string_array</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;X&#39;</span>
+				<span class="n">row_string_array</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;X&#39;</span>
 			<span class="k">else</span><span class="p">:</span>
-				<span class="n">row_string_array</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">=</span><span class="s">&#39;_&#39;</span>
-		<span class="k">print</span><span class="p">(</span> 	<span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">row_string_array</span> <span class="p">))</span>
- </div>
+				<span class="n">row_string_array</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;_&#39;</span>
+		<span class="nb">print</span><span class="p">(</span> 	<span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">row_string_array</span> <span class="p">))</span></div>
+ 
 <div class="viewcode-block" id="encode_solution"><a class="viewcode-back" href="../index.html#n_queen_dijkstra_skeleton.encode_solution">[docs]</a><span class="k">def</span> <span class="nf">encode_solution</span><span class="p">(</span><span class="n">qc</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">	.. _encode_solution:</span>
@@ -94,24 +96,33 @@
 	<span class="n">solution_code</span> <span class="o">=</span> <span class="mi">0</span>
 	<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">qc</span><span class="p">:</span>
 		<span class="n">solution_code</span> <span class="o">=</span> <span class="n">solution_code</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">col</span>
-	<span class="k">return</span> <span class="n">solution_code</span>
-</div>
+	<span class="k">return</span> <span class="n">solution_code</span></div>
+
 <div class="viewcode-block" id="eight_queen"><a class="viewcode-back" href="../index.html#n_queen_dijkstra_skeleton.eight_queen">[docs]</a><span class="k">def</span> <span class="nf">eight_queen</span><span class="p">():</span>
 	<span class="sd">&quot;&quot;&quot; As written by Dijkstra in *A Short Introduction to the Art of Programming*, chapter 9, 1971.</span>
 <span class="sd">	</span>
-<span class="sd">	Only modification: N, the current number of queens on the board, is passed as a parameter to the recursive</span>
-<span class="sd">	function.</span>
-
 <span class="sd">	.. todo::</span>
 
 <span class="sd">		Implement the function, using `Dijkstra&#39;s pseudo-code &lt;../../../E.W.Dijkstra_Archive_A_Short_Introduction_to_the_Art_of_Programming_EWD_316_Chapter_9.html&gt;`_ as an inspiration.</span>
+
+<span class="sd">		Notice that Dijkstra follows the usual pattern of a recursive algorithm:</span>
+
+<span class="sd">			1. The `generate` function is *defined* as an inner, recursive procedure</span>
+<span class="sd">			2. The board is initialized</span>
+<span class="sd">			3. The `generate` function is *called*</span>
+<span class="sd">	</span>
+<span class="sd">		Follow the pattern, but adapt where appropriate:</span>
+
+<span class="sd">			* When Dijkstra&#39;s just updates the vectors, your algorithm should `return` a list of solutions</span>
+<span class="sd">			* In Dijktra, :math:`n`, the number of queens already placed, is an external variable: you are well advised to pass this value as a parameter to the recursive `generate` function instead (unless you know what the `nonlocal` keyword means in Python)</span>
+
 <span class="sd">	</span>
 <span class="sd">	:return: a (sorted) list of solution codes, where each vector of column numbers is encoded as an integer (call the encode_solution_ procedure).</span>
 <span class="sd">	:rtype: list</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">pass</span>
+	<span class="k">pass</span></div>
 
-</div>
+
 <div class="viewcode-block" id="n_queen"><a class="viewcode-back" href="../index.html#n_queen_dijkstra_skeleton.n_queen">[docs]</a><span class="k">def</span> <span class="nf">n_queen</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; (EXTRA-CREDIT +10 pts - UNCOMMENT THE CORRESPONDING UNIT TESTS) An easy generalization to N queens.</span>
 <span class="sd">	</span>
@@ -125,8 +136,8 @@
 <span class="sd">	</span>
 <span class="sd">	:rtype: list</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">pass</span>
-</div>
+	<span class="k">pass</span></div>
+
 <span class="k">class</span> <span class="nc">NQueenTest</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 	<span class="n">seven_queen_solutions</span> <span class="o">=</span> <span class="p">[</span>	<span class="mi">246135</span><span class="p">,</span> <span class="mi">362514</span><span class="p">,</span> <span class="mi">415263</span><span class="p">,</span> <span class="mi">531642</span><span class="p">,</span> <span class="mi">1306425</span><span class="p">,</span> <span class="mi">1350246</span><span class="p">,</span> <span class="mi">1403625</span><span class="p">,</span> <span class="mi">1420635</span><span class="p">,</span> <span class="mi">1463025</span><span class="p">,</span> <span class="mi">1526304</span><span class="p">,</span> 
@@ -153,68 +164,70 @@
 	<span class="k">def</span> <span class="nf">test_eight_queen_2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">eight_queen</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">eight_queen_solutions</span><span class="p">)</span>
 
-<span class="c">## UNCOMMENT FOR EXTRA-CREDIT WORK</span>
-<span class="c">#</span>
-<span class="c">#	def test_four_queen_1(self):</span>
-<span class="c">#		self.assertEqual( len(n_queen(4)), 2)</span>
-<span class="c">#</span>
-<span class="c">#	def test_four_queen_2(self):</span>
-<span class="c">#		self.assertEqual( n_queen(4), [1302, 2031])</span>
-<span class="c">#</span>
-<span class="c">#	def test_five_queen_1(self):</span>
-<span class="c">#		self.assertEqual( len(n_queen(5)), 10)</span>
-<span class="c">#</span>
-<span class="c">#	def test_five_queen_2(self):</span>
-<span class="c">#		self.assertEqual( n_queen(5), [2413, 3142, 13024, 14203, 20314, 24130, 30241, 31420, 41302, 42031])</span>
-<span class="c">#</span>
-<span class="c">#	def test_six_queen_2(self):</span>
-<span class="c">#		self.assertEqual( len(n_queen(6)), 4 )</span>
-<span class="c">#</span>
-<span class="c">#	def test_six_queen_2(self):</span>
-<span class="c">#		self.assertEqual( n_queen(6), [135024, 251403, 304152, 420531] )</span>
-<span class="c">#</span>
-<span class="c">#	def test_seven_queen_1(self):</span>
-<span class="c">#		self.assertEqual( len(n_queen(7)), 40)</span>
-<span class="c">#</span>
-<span class="c">#	def test_seven_queen_2(self):</span>
-<span class="c">#		self.assertEqual( n_queen(7), self.seven_queen_solutions )</span>
-<span class="c">#</span>
-<span class="c">#	def test_eight_queen_3(self):</span>
-<span class="c">#		self.assertEqual( len(n_queen(8)), 92)</span>
-<span class="c">#</span>
-<span class="c">#	def test_eight_queen_4(self):</span>
-<span class="c">#		self.assertEqual( n_queen(8), self.eight_queen_solutions)</span>
-<span class="c">#</span>
-<span class="c">#	def test_nine_queen(self):</span>
-<span class="c">#		self.assertEqual( len(n_queen(9)), 352)</span>
+<span class="c1">## UNCOMMENT FOR EXTRA-CREDIT WORK</span>
+<span class="c1">#</span>
+<span class="c1">#	def test_four_queen_1(self):</span>
+<span class="c1">#		self.assertEqual( len(n_queen(4)), 2)</span>
+<span class="c1">#</span>
+<span class="c1">#	def test_four_queen_2(self):</span>
+<span class="c1">#		self.assertEqual( n_queen(4), [1302, 2031])</span>
+<span class="c1">#</span>
+<span class="c1">#	def test_five_queen_1(self):</span>
+<span class="c1">#		self.assertEqual( len(n_queen(5)), 10)</span>
+<span class="c1">#</span>
+<span class="c1">#	def test_five_queen_2(self):</span>
+<span class="c1">#		self.assertEqual( n_queen(5), [2413, 3142, 13024, 14203, 20314, 24130, 30241, 31420, 41302, 42031])</span>
+<span class="c1">#</span>
+<span class="c1">#	def test_six_queen_2(self):</span>
+<span class="c1">#		self.assertEqual( len(n_queen(6)), 4 )</span>
+<span class="c1">#</span>
+<span class="c1">#	def test_six_queen_2(self):</span>
+<span class="c1">#		self.assertEqual( n_queen(6), [135024, 251403, 304152, 420531] )</span>
+<span class="c1">#</span>
+<span class="c1">#	def test_seven_queen_1(self):</span>
+<span class="c1">#		self.assertEqual( len(n_queen(7)), 40)</span>
+<span class="c1">#</span>
+<span class="c1">#	def test_seven_queen_2(self):</span>
+<span class="c1">#		self.assertEqual( n_queen(7), self.seven_queen_solutions )</span>
+<span class="c1">#</span>
+<span class="c1">#	def test_eight_queen_3(self):</span>
+<span class="c1">#		self.assertEqual( len(n_queen(8)), 92)</span>
+<span class="c1">#</span>
+<span class="c1">#	def test_eight_queen_4(self):</span>
+<span class="c1">#		self.assertEqual( n_queen(8), self.eight_queen_solutions)</span>
+<span class="c1">#</span>
+<span class="c1">#	def test_nine_queen(self):</span>
+<span class="c1">#		self.assertEqual( len(n_queen(9)), 352)</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
 	<span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+
+
+
+
+
 </pre></div>
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -223,13 +236,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">N-Queen 1.0 documentation</a> &raquo;</li>
-          <li><a href="index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">N-Queen 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2017, NPR.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, NPR.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.9.
     </div>
   </body>
 </html>

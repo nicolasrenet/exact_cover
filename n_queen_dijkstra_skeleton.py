@@ -49,12 +49,21 @@ def encode_solution(qc):
 def eight_queen():
 	""" As written by Dijkstra in *A Short Introduction to the Art of Programming*, chapter 9, 1971.
 	
-	Only modification: N, the current number of queens on the board, is passed as a parameter to the recursive
-	function.
-
 	.. todo::
 
 		Implement the function, using `Dijkstra's pseudo-code <../../../E.W.Dijkstra_Archive_A_Short_Introduction_to_the_Art_of_Programming_EWD_316_Chapter_9.html>`_ as an inspiration.
+
+		Notice that Dijkstra follows the usual pattern of a recursive algorithm:
+
+			1. The `generate` function is *defined* as an inner, recursive procedure
+			2. The board is initialized
+			3. The `generate` function is *called*
+	
+		Follow the pattern, but adapt where appropriate:
+
+			* When Dijkstra's just updates the vectors, your algorithm should `return` a list of solutions
+			* In Dijktra, :math:`n`, the number of queens already placed, is an external variable: you are well advised to pass this value as a parameter to the recursive `generate` function instead (unless you know what the `nonlocal` keyword means in Python)
+
 	
 	:return: a (sorted) list of solution codes, where each vector of column numbers is encoded as an integer (call the encode_solution_ procedure).
 	:rtype: list
