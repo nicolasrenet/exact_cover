@@ -111,7 +111,6 @@ class WeeklySchedule( dlx.ExactCover ):
 		indices = []
 		for pair in schedule:
 			indices.append( offset + pair[1]*worked + pair[0])
-		#print(indices)
 		return indices
 
 
@@ -225,14 +224,14 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 		#	H = business hours = TL/n 
 		#  	
 		#
-		#  Solution (2) It is a cleaner implementation of solution (1): relax constraint on room/teacher, while ensuring that no teacher teaches in 2 rooms at the same hour, but this time enforced by the matrix
+		#  Solution (2) It is a cleaner implementation of (1): relax constraint on room/teacher, while ensuring that no teacher teaches in 2 rooms at the same hour, but this time enforced by the matrix
 		#
 		#  Columns:
 		#
 		#  | T Teacher cols |  Room-to-hour columns (n x H): rooms for H1, rooms for H2, ..., rooms for HH
 		#
 		# For each row, we select 
-		#       (1) - L of the corresponding R-to-H columns: a choice of 1 room (out of n) for everyone of the L hours (out of H hours) -> this ensures that hours are assigned to teachers, as well as rooms, and no
+		#      - L of the corresponding R-to-H columns: a choice of 1 room (out of n) for everyone of the L hours (out of H hours) 
 		#
 		# Steps:
 		#  	- generate all permutations of L rooms, repeat allowed (room_lets)
@@ -241,7 +240,25 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 		#	- populate the matrix accordingly
 
 
-		room_lets = self.n_permute_r( range(self.rooms), self.load, not self.sudoku )
+		#---------------------------------------------------------------------------------------------------------
+		#  Solution (3) is variation of (2), with the extra-constraint that no room can be selected twice for the same teacher. 
+		#  There are 2 ways to obtain this:
+		#	- either by tweaking the matrix-filling logic to generate room permutations with ** no ** repeats
+		#	- or by adding extra-column in the matrix (better)
+		#
+		#  Columns:
+		#
+		#  | T Teacher cols | Room-to-hour cols (n x H): room for hour 1, ..., room for hour H [ | Room-to-teacher columns (n x T): rooms for t. 1, ..., room for t. T | ]
+		#
+		# For each row, we select 
+		#	(1) - 
+		#       (2) - 
+		#
+		# Steps:
+		#  	- generate all permutations of L rooms, repeat allowed or not (room_lets)
+		#       - generate all combinations of L hours (hour_lets)
+
+		room_lets = self.n_permute_r( range(self.rooms), self.load, True)
 		hours_worked = int(self.teachers * self.load / self.rooms)
 		hour_lets = self.n_choose_r( range(hours_worked), self.load)
 
@@ -259,7 +276,7 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 			matrix_width += self.rooms * self.teachers
 
 		for t in range(self.teachers):
-			for mts in  [ self.teacher_schedule_to_matrix_columns( ts, -1 ) for ts in teacher_schedules ]:
+			for mts in  [ self.teacher_schedule_to_matrix_columns( ts, t if self.sudoku else -1 ) for ts in teacher_schedules ]:
 				row = [ 0 for i in range( matrix_width ) ]
 				row[t]=1
 				for s in mts:
@@ -286,7 +303,7 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 			r = pair[1]
 			indices.append( offset + h * self.rooms + r )
 			if self.sudoku and teacher > -1:
-				indices.append( offset + hours_worked + teacher * self.rooms + r )
+				indices.append( offset + hours_worked*self.rooms + teacher * self.rooms + r )
 		return indices
 			
 
@@ -307,7 +324,7 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 				nodes.append( int(j.column.name)  )
 				j=j.right
 			nodes.sort()
-			solution_str_array.append( str([ self.matrix_col_to_grid(col) for col in nodes ]))
+			solution_str_array.append( str([ self.matrix_col_to_grid(col) for col in nodes[:1 + self.load] ]))
 
 
 		return '\n'.join( solution_str_array )
@@ -321,25 +338,10 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 		return "H{}R{}".format( int((col-self.teachers)/self.rooms), (col-self.teachers)%self.rooms )
 
 
-		#---------------------------------------------------------------------------------------------------------
-		#  Solution (3) It is a sudoku-like problem, where we cannot select an hour-col twice for the same teacher, 
-		#  but cannot select a room-col twice for the same teacher either
-		#
-		#  Columns:
-		#
-		#  | T Teacher cols | Room-to-teacher cols (n x T) | Room-to-hour columns (n x H) 
-		#
-		# For each row, we select 
-		#	(1) - L of the corresponding R-to-T columns: a choice of L room assignments = C(n, L) possibilities
-		#       (2) - L of the corresponding R-to-H columns: a choice of 1 room (out of n) for everyone of the L hours (out of H hours) -> this ensures that hours are assigned to teachers, as well as rooms, and no
-		#
-		# Steps:
-		#  	- generate all permutations of L rooms, no repeat allowed (room_lets)
-		#       - generate all combinations of L hours (hour_lets)
-		#       - 
 
-#ws = WeeklyScheduleSudoku(4,2,2)
-ws = WeeklyScheduleSudoku(12,3,3,False)
+#ws = WeeklyScheduleSudoku(4,2,2, True)
+#ws = WeeklyScheduleSudoku(12,3,3,False)
+ws = WeeklyScheduleSudoku(12,3,3,True)
 
 
 start = time.time()
