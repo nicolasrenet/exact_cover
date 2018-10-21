@@ -9,7 +9,7 @@ dlx.LOGLEVEL=1
 
 class WeeklySchedule( dlx.ExactCover ):
 
-	def __init__(self, teachers=12, load=3, rooms=3):
+	def __init__(self, teachers=12, load=3, rooms=3, sudoku=False):
 
 		super().__init__()
 
@@ -18,200 +18,11 @@ class WeeklySchedule( dlx.ExactCover ):
 		self.teachers=teachers
 		self.load=load
 		self.rooms=rooms
+		self.sudoku=sudoku
 
 		self.build_matrix()
 		self.build_links()
-		
-	 
-		
-	def build_matrix(self): 
-
-		# A matrix of all possible ways for 12 teachers to teach 3 hours in 2 rooms
-		#
-		# Let 
-		#	T = # teachers
-		#	L = teaching (hours / teacher)
-		#	n = # rooms
-		#
-		# Solution (1)
-		#
-		#  Idea: the matrix filling logic ensures that no teacher is assigned the same hour in 2 different room (no ubiquity!)
-		#
-		#  Columns:
-		#
-		# | ... T teacher columns ... | TL/n slots for room 1 | TL/n slots for room 2 | ... | TL/n slots for room n
-		# 
-		# A row represents a schedule assignment for 1 teacher, that choose 3 slots out of the (n x T x L) possible slots
-
-		# For all teachers, only once:
-		# 1) generate C(TL/n  L) L-combinations of slots actually worked
-		# 2) generate all L-permutations of n rooms (repeats allowed)
-		# 3) generate all L-tuples of pairs (hour slot, room)
-		# For each teacher: 
-		#  For each n-tuple:
-		#    Create a row in the matrix
-
-		#  Solution (2)
-		#
-		#  Idea: the matrix filling logic, but the matrix is larger; much of the work is shifted to the DLX algorithm.
-		#
-		#  Columns:
-		#
-		# | ... T Teacher columns ... | Room-to-teacher columns (n x T) | Hour-to-teacher columns (TL/n x T ) |
-		#
-		# For each row, we select 
-		#	- L of the corresponding R-to-T columns (a choice of L room assignments, out of C(nT, L) possibilities
-		#       - L of the corresponding H-to-T columns (a choice of L hour assignments, out of C(TL/n, L) possibilities
-		#
-		# Total: 12 + (3x12) + (12^2 * 3) / n 
-		#
-		# Difficulty: we must be able to select a room more than once for every teacher. The solution above would fit a narrower,
-		# Sudoku-like definition of the problem, where no teacher must teach twice in the same classroom (that keeps them on the
-		# edge, which should please the administrators).
-		#
-		# That could be solved with an even larger set of room-to-teacher columns: we would have T subsets of 
-		# n^L columns. Each column in a subset would represent one way to assign L rooms (possibly the same) to a teacher
-		#
-
-		# solution (1)
-
-		# hours open for business
-		slots = int(self.teachers * self.load / self.rooms)
-		slot_lets = self.n_choose_r( range(slots), self.load)
-		room_lets = self.n_permute_r( range(self.rooms), self.load, True)
-
-		teacher_schedules = []
-		for slot_let in slot_lets:
-			for room_let in room_lets:
-				teacher_schedules.append( [ (slot_let[h],room_let[h]) for h in range(self.load) ] ) 
-
-		
-		matrix = []
-		matrix_width= self.teachers + self.teachers * self.load 
-		for mts in [ self.teacher_schedule_to_matrix_columns( ts ) for ts in teacher_schedules ]:
-			for t in range(self.teachers):
-				row = [ 0 for i in range( matrix_width ) ]
-				row[t]=1
-				for s in mts:
-					row[s]=1
-				matrix.append(row)
-		#print(matrix)						
-		self.matrix = matrix
-
-	def teacher_schedule_to_matrix_columns(self, schedule ):
-		""" Map a teacher schedule, i.e. a set of L pairs (<hour slot>, room), to the corresponding columns indices in the matrix.
-		:param schedule: a list of pairs (<hour slot>, room)
-		:type schedule: list
-		:return: a list of matrix indices
-		:rtype: list
-		"""
-		offset = self.teachers
-		worked = int(self.teachers * self.load / self.rooms)
-  
-		indices = []
-		for pair in schedule:
-			indices.append( offset + pair[1]*worked + pair[0])
-		return indices
-
-
-	def n_choose_r(self, n_set, r):
-		""" Compute all r-subsets of n values
-
-		:param n_set: set of values 
-		:param r: number of elements in each combination
-		:repeat: if True, repeats allowed (default: False)
-		:type n_set: list
-		:type r: int
-		:type repeat: bool
-		"""
-
-		subsets = []
-
-		def n_c_r_rec(i, r_let):
-			# base case 1: r-let is complete
-			if len(r_let)==r:
-				subsets.append(r_let)
-				return
-			# base case 2: end of the list
-			if i>=len(n_set):
-				return
-			# all branches that do contain the current element i
-			n_c_r_rec(i+1, r_let + [ n_set[i] ] )
-			# all branches that don't
-			n_c_r_rec(i+1, r_let) 
-		
-		n_c_r_rec(0, [])
-
-		return subsets
-
-	def n_permute_r(self, n_set, r, repeat=False):
-		""" Compute all r-permutations of n values.
-		
-		:param n_set: set of values 
-		:param r: number of elements in each permutation
-		:repeat: if True, repeats allowed (default: False)
-		:type n_set: list
-		:type r: int
-		:type repeat: bool
-		"""
-		
-		permutations = []
-
-		def n_p_r_rec(i, r_let, used):
-			if len(r_let)==r:
-				permutations.append( r_let )
-				return
-			if i>len(n_set):
-				return
-			for j in n_set:
-				if repeat or j not in used:
-					n_p_r_rec(i+1, r_let + [j], used + [j])
-		n_p_r_rec(0,[],[])
-
-		return permutations
-		
 			
-		
-	def solution_string(self, solution, solution_count=0):
-		"""
-		Return a human-readable solution of the problem.
-		"""
-		count = 0
-		if solution_count > 0: count = solution_count
-		solution_str_array = ["\n-----  Solution {}  ------".format(count)]
-		for i in solution:
-			if  i is None: break
-			j = i.right
-			nodes = [ int(i.column.name) ]
-			while j is not i:
-				nodes.append( int(j.column.name)  )
-				j=j.right
-			nodes.sort()
-			solution_str_array.append( str([ self.matrix_col_to_grid(col) for col in nodes ]))
-
-
-		return '\n'.join( solution_str_array )
-
-	def matrix_col_to_grid(self, col):
-		""" Interpret the selected row """
-
-		hours_worked=int(self.teachers*self.load/self.rooms)
-		if col < self.teachers:
-			return "T{}".format(col)
-		room = int( (col-self.teachers)/hours_worked )
-		hour = (col-self.teachers)%hours_worked
-		return "H{}R{}".format(hour, room)
-
-
-class WeeklyScheduleSudoku( WeeklySchedule ):
-
-	def __init__(self, teachers=12, load=3, rooms=3, sudoku=False):
-
-		self.sudoku = sudoku
-		
-		super().__init__(teachers, load, rooms)
-		
-
 	def build_matrix(self): 
 
 		# A matrix of all possible ways for 12 teachers to teach 3 hours in 2 rooms, but this time, _no teacher 
@@ -223,8 +34,26 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 		#	n = # rooms
 		#	H = business hours = TL/n 
 		#  	
+		#-------------------------------------------------------------------------------------------------------------------
+		# Solution (1) - not implemented in this version
 		#
-		#  Solution (2) It is a cleaner implementation of (1): relax constraint on room/teacher, while ensuring that no teacher teaches in 2 rooms at the same hour, but this time enforced by the matrix
+		#  Default: we rely on the matrix-filling logic to ensure that no teacher is assigned the same hour in 2 different 
+		#  rooms (no ubiquity!). 
+		#
+		#  Columns:
+		#
+		# | ... T teacher columns ... | TL/n slots for room 1 | TL/n slots for room 2 | ... | TL/n slots for room n
+		# 
+		# A row represents a schedule assignment for 1 teacher, that choose 3 slots out of the (n x T x L) possible slots
+		#
+		# For all teachers, only once:
+		#  1) generate C(TL/n  L) L-combinations of slots actually worked
+		#  2) generate all L-permutations of n rooms (repeats allowed)
+		#  3) generate all L-tuples of pairs (hour slot, room)
+		#
+		#------------------------------------------------------------------------------------------------------------------
+		#  Solution (2) It is a cleaner implementation of (1): relax constraint on room/teacher, while ensuring that no teacher
+		# teaches in 2 rooms at the same hour, but this time enforced by the matrix
 		#
 		#  Columns:
 		#
@@ -238,13 +67,13 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 		#       - generate all combinations of L hours (hour_lets)
 		#	- form sets of pairs (room, hour)
 		#	- populate the matrix accordingly
-
-
+		#
 		#---------------------------------------------------------------------------------------------------------
-		#  Solution (3) is variation of (2), with the extra-constraint that no room can be selected twice for the same teacher. 
+		#  Solution (3) is a variation of (2), with the extra-constraint that no room can be selected twice for the same teacher. 
 		#  There are 2 ways to obtain this:
 		#	- either by tweaking the matrix-filling logic to generate room permutations with ** no ** repeats
 		#	- or by adding extra-column in the matrix (better)
+		#  Pass the 'sudoku' option to obtain this variation at runtime.
 		#
 		#  Columns:
 		#
@@ -337,11 +166,66 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 			return "T{}".format(col)
 		return "H{}R{}".format( int((col-self.teachers)/self.rooms), (col-self.teachers)%self.rooms )
 
+		
 
+	def n_choose_r(self, n_set, r):
+		""" Compute all r-subsets of n values
 
-#ws = WeeklyScheduleSudoku(4,2,2, True)
-#ws = WeeklyScheduleSudoku(12,3,3,False)
-ws = WeeklyScheduleSudoku(12,3,3,True)
+		:param n_set: set of values 
+		:param r: number of elements in each combination
+		:repeat: if True, repeats allowed (default: False)
+		:type n_set: list
+		:type r: int
+		:type repeat: bool
+		"""
+
+		subsets = []
+
+		def n_c_r_rec(i, r_let):
+			# base case 1: r-let is complete
+			if len(r_let)==r:
+				subsets.append(r_let)
+				return
+			# base case 2: end of the list
+			if i>=len(n_set):
+				return
+			# all branches that do contain the current element i
+			n_c_r_rec(i+1, r_let + [ n_set[i] ] )
+			# all branches that don't
+			n_c_r_rec(i+1, r_let) 
+		
+		n_c_r_rec(0, [])
+
+		return subsets
+
+	def n_permute_r(self, n_set, r, repeat=False):
+		""" Compute all r-permutations of n values.
+		
+		:param n_set: set of values 
+		:param r: number of elements in each permutation
+		:repeat: if True, repeats allowed (default: False)
+		:type n_set: list
+		:type r: int
+		:type repeat: bool
+		"""
+		
+		permutations = []
+
+		def n_p_r_rec(i, r_let, used):
+			if len(r_let)==r:
+				permutations.append( r_let )
+				return
+			if i>len(n_set):
+				return
+			for j in n_set:
+				if repeat or j not in used:
+					n_p_r_rec(i+1, r_let + [j], used + [j])
+		n_p_r_rec(0,[],[])
+
+		return permutations
+		
+
+ws = WeeklySchedule(12,3,3,False)
 
 
 start = time.time()
