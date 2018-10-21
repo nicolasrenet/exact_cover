@@ -206,8 +206,10 @@ class WeeklySchedule( dlx.ExactCover ):
 
 class WeeklyScheduleSudoku( WeeklySchedule ):
 
-	def __init__(self, teachers=12, load=3, rooms=3):
+	def __init__(self, teachers=12, load=3, rooms=3, sudoku=False):
 
+		self.sudoku = sudoku
+		
 		super().__init__(teachers, load, rooms)
 		
 
@@ -239,7 +241,7 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 		#	- populate the matrix accordingly
 
 
-		room_lets = self.n_permute_r( range(self.rooms), self.load, True )
+		room_lets = self.n_permute_r( range(self.rooms), self.load, not self.sudoku )
 		hours_worked = int(self.teachers * self.load / self.rooms)
 		hour_lets = self.n_choose_r( range(hours_worked), self.load)
 
@@ -249,10 +251,15 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 			for room_let in room_lets:
 				teacher_schedules.append( [ (hour_let[h], room_let[h]) for h in range(self.load)] )
 
+
 		matrix = []
 		matrix_width = self.teachers + self.rooms * hours_worked
-		for mts in  [ self.teacher_schedule_to_matrix_columns( ts ) for ts in teacher_schedules ]:
-			for t in range(self.teachers):
+
+		if self.sudoku:
+			matrix_width += self.rooms * self.teachers
+
+		for t in range(self.teachers):
+			for mts in  [ self.teacher_schedule_to_matrix_columns( ts, -1 ) for ts in teacher_schedules ]:
 				row = [ 0 for i in range( matrix_width ) ]
 				row[t]=1
 				for s in mts:
@@ -263,7 +270,7 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 			
 
 
-	def teacher_schedule_to_matrix_columns(self, schedule ):
+	def teacher_schedule_to_matrix_columns(self, schedule, teacher ):
 		""" Map a teacher schedule, i.e. a set of L pairs (<hour slot>, room), to the corresponding columns indices in the matrix.
 		:param schedule: a list of pairs (<hour slot>, room)
 		:type schedule: list
@@ -278,6 +285,8 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 			h = pair[0]
 			r = pair[1]
 			indices.append( offset + h * self.rooms + r )
+			if self.sudoku and teacher > -1:
+				indices.append( offset + hours_worked + teacher * self.rooms + r )
 		return indices
 			
 
@@ -330,7 +339,7 @@ class WeeklyScheduleSudoku( WeeklySchedule ):
 		#       - 
 
 #ws = WeeklyScheduleSudoku(4,2,2)
-ws = WeeklyScheduleSudoku(12,3,3)
+ws = WeeklyScheduleSudoku(12,3,3,False)
 
 
 start = time.time()
