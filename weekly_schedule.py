@@ -9,11 +9,10 @@ dlx.LOGLEVEL=1
 
 class WeeklySchedule( dlx.ExactCover ):
 
-	def __init__(self, teachers=12, load=3, rooms=3, sudoku=False):
+	def __init__(self, teachers, load, rooms, sudoku=False):
+
 
 		super().__init__()
-
-
 
 		self.teachers=teachers
 		self.load=load
@@ -22,6 +21,7 @@ class WeeklySchedule( dlx.ExactCover ):
 
 		self.build_matrix()
 		self.build_links()
+
 			
 	def build_matrix(self): 
 
@@ -63,10 +63,13 @@ class WeeklySchedule( dlx.ExactCover ):
 		#      - L of the corresponding R-to-H columns: a choice of 1 room (out of n) for everyone of the L hours (out of H hours) 
 		#
 		# Steps:
-		#  	- generate all permutations of L rooms, repeat allowed (room_lets)
-		#       - generate all combinations of L hours (hour_lets)
+		#  	- generate all permutations of L rooms, repeat allowed (room_lets)  	= n^L elements
+		#       - generate all combinations of L hours (hour_lets)			= C(H,L) elements
 		#	- form sets of pairs (room, hour)
 		#	- populate the matrix accordingly
+		#	
+		# Total number of rows is R = T * n^L * C(H,L)
+		# Total number of candidate solutions is C(R,T)
 		#
 		#---------------------------------------------------------------------------------------------------------
 		#  Solution (3) is a variation of (2), with the extra-constraint that no room can be selected twice for the same teacher. 
@@ -112,6 +115,7 @@ class WeeklySchedule( dlx.ExactCover ):
 					row[s]=1
 				matrix.append(row)
 		#print(matrix)
+		print("Exact cover matrix has {} rows".format( len(matrix)))
 		self.matrix = matrix
 			
 
@@ -167,8 +171,8 @@ class WeeklySchedule( dlx.ExactCover ):
 		return "H{}R{}".format( int((col-self.teachers)/self.rooms), (col-self.teachers)%self.rooms )
 
 		
-
-	def n_choose_r(self, n_set, r):
+	@classmethod
+	def n_choose_r(cls, n_set, r):
 		""" Compute all r-subsets of n values
 
 		:param n_set: set of values 
@@ -198,7 +202,8 @@ class WeeklySchedule( dlx.ExactCover ):
 
 		return subsets
 
-	def n_permute_r(self, n_set, r, repeat=False):
+	@classmethod
+	def n_permute_r(cls, n_set, r, repeat=False):
 		""" Compute all r-permutations of n values.
 		
 		:param n_set: set of values 
@@ -225,13 +230,6 @@ class WeeklySchedule( dlx.ExactCover ):
 		return permutations
 		
 
-ws = WeeklySchedule(12,3,3,False)
-
-
-start = time.time()
-ws.solve(12)
-#print("Time elapsed: {}mn".format( (time.time() - start)//60))
-
 
 
 
@@ -244,64 +242,26 @@ class WeeklySchedule_TestClass( unittest.TestCase):
 		values = range(0, 10)
 
 
-		ws = WeeklySchedule()
-		self.assertEqual( len( ws.n_choose_r( values, 3 )), 120 )
+		self.assertEqual( len( WeeklySchedule.n_choose_r( values, 3 )), 120 )
 
 	def test_n_permute_r(self):
 		values = range(0, 10)
-		ws=WeeklySchedule()
-		self.assertEqual( len( ws.n_permute_r( values, 3)), 720 )
-		self.assertEqual( len( ws.n_permute_r( values, 3, True)), 1000 )
+		self.assertEqual( len( WeeklySchedule.n_permute_r( values, 3)), 720 )
+		self.assertEqual( len( WeeklySchedule.n_permute_r( values, 3, True)), 1000 )
 
 	
-	def atest_known_solution(self):
-		# construct the matrix of a know solution
-		summary = (
-			(15,16,17,18,19),
-			(26,36,37,38,48),
-			(61,68,69,70,71),
-			(12,13,22,32,33),
-			(14,23,24,25,34),
-			(41,50,51,59,60),
-			(20,21,30,31,40),
-			(47,57,58,66,67),
-			(55,56,63,64,65),
-			(42,52,53,54,62),
-			(27,28,29,39,49),
-			(35,43,44,45,56))
+	def test_weekly_schedule_normal(self):
+		ws = WeeklySchedule(4,2,2)
+		solution_count = ws.solve(4, True) 
+		print('test_weekly_schedule_normal: WeeklySchedule(4,2,2) has {} solutions.'.format( solution_count))
+		self.assertTrue( solution_count > 0)
+	
 
-		matrix = [ [ 0 for j in range(72) ] for i in range(12) ]
-
-		
-		row=0
-		for idx in range(len(summary)):
-			matrix[row][idx]=1
-			for pos in summary[idx]:
-				matrix[row][pos]=1
-			row += 1
-		
-		def junk_row():
-			new_row = [0] * 72
-			index_pool = list( range(0,72) )
-			for  i in range(5):
-				idx = random.randint(0,len(index_pool)-1)
-				new_row[idx]=1
-				index_pool.pop(idx)
-			return new_row
-				
-		for junk in range(0):
-			new_pos = random.randint(0,len(matrix)-1)
-			matrix.insert( new_pos, junk_row())
-
-		
-		print_matrix(matrix,12,72)
-
-		lists = build_links( matrix )	
-
-		solution = [None for i in range(12) ]
-		search(0, lists, solution)
-		print(solution)
-		print_solution(solution)
+	def test_weekly_schedule_sudoku(self):
+		ws = WeeklySchedule(4,2,2, True)
+		solution_count = ws.solve(4, True) 
+		print('test_weekly_schedule_sudoku: WeeklySchedule(4,2,2) has {} solutions.'.format( solution_count))
+		self.assertTrue( solution_count > 0)
 
 	
 
