@@ -79,24 +79,28 @@ class Pentomino( dlx.ExactCover ):
 
 
 	# reflect and rotate functions
-
-	def reflect_horizontal(self, piece ):
+	@classmethod
+	def reflect_horizontal(cls, piece ):
 		return piece[::-1] 
 
-	def reflect_vertical(self, piece ):
+	@classmethod
+	def reflect_vertical(cls, piece ):
 		return [ list(row[::-1]) for row in piece ] 
 
-	def rotate_90(self, piece ):
+	@classmethod
+	def rotate_90(cls, piece ):
 		return [[ row[j] for row in piece[::-1]] for j in range(len(piece[0])) ]
 
-	def rotate_180(self, piece ):
+	@classmethod
+	def rotate_180(cls, piece ):
 		return [ list(row[::-1]) for row in piece[::-1]] 
 
-	def rotate_270(self, piece ):
+	@classmethod
+	def rotate_270(cls, piece ):
 		return [[ row[j] for row in piece ] for j in reversed( range(len(piece[0])))]
 
-	def grid_to_matrix_col(self, row, col ):
 
+	def grid_to_matrix_col(self, row, col ):
 		return 12 + row*self.grid_width + col 
 
 	def matrix_col_to_grid(self, c ):
@@ -190,17 +194,6 @@ class Pentomino( dlx.ExactCover ):
 		self.matrix = matrix
 
 
-p = Pentomino()
-
-
-#start = time.time()
-p.solve(12)
-#print("Time elapsed: {}mn".format( (time.time() - start)//60))
-
-#p.print_solution( solution )
-
-
-
 
 
 class Pentomino_TestClass( unittest.TestCase):
@@ -210,76 +203,34 @@ class Pentomino_TestClass( unittest.TestCase):
 		(0,1,0))
 
 	def test_rotate_90( self ):
-		self.assertEqual( rotate_90( self.piece), [[0,1,0],[1,1,0],[0,1,1]])		
+		self.assertEqual( Pentomino.rotate_90( self.piece), [[0,1,0],[1,1,0],[0,1,1]])		
 
 	def test_rotate_180( self ):
-		self.assertEqual( rotate_180( self.piece), [[0,1,0],[1,1,1],[1,0,0]])		
+		self.assertEqual( Pentomino.rotate_180( self.piece), [[0,1,0],[1,1,1],[1,0,0]])		
 
 	def test_rotate_270( self ):
-		self.assertEqual( rotate_270( self.piece), [[1,1,0],[0,1,1],[0,1,0]])		
+		self.assertEqual( Pentomino.rotate_270( self.piece), [[1,1,0],[0,1,1],[0,1,0]])		
 
 
 	def test_grid_coordinates_to_matrix_col(self):
 		
-		self.assertEqual( grid_to_matrix_col( 0,0 ), 12 )
-		self.assertEqual( grid_to_matrix_col( 0,9 ), 21 )
-		self.assertEqual( grid_to_matrix_col( 1,0 ), 22 )
+		pentomino = Pentomino()
+		self.assertEqual( pentomino.grid_to_matrix_col( 0,0 ), 12 )
+		self.assertEqual( pentomino.grid_to_matrix_col( 0,9 ), 21 )
+		self.assertEqual( pentomino.grid_to_matrix_col( 1,0 ), 22 )
 		
 	def test_matrix_col_to_grid_coordinates(self):
-		self.assertEqual( matrix_col_to_grid(12), (0,0))
-		self.assertEqual( matrix_col_to_grid(21), (0,9))
-		self.assertEqual( matrix_col_to_grid(22), (1,0))
+		pentomino = Pentomino()
+		self.assertEqual( pentomino.matrix_col_to_grid(12), (0,0))
+		self.assertEqual( pentomino.matrix_col_to_grid(21), (0,9))
+		self.assertEqual( pentomino.matrix_col_to_grid(22), (1,0))
 
 
-	def atest_known_solution(self):
-		# construct the matrix of a know solution
-		summary = (
-			(15,16,17,18,19),
-			(26,36,37,38,48),
-			(61,68,69,70,71),
-			(12,13,22,32,33),
-			(14,23,24,25,34),
-			(41,50,51,59,60),
-			(20,21,30,31,40),
-			(47,57,58,66,67),
-			(55,56,63,64,65),
-			(42,52,53,54,62),
-			(27,28,29,39,49),
-			(35,43,44,45,56))
-
-		matrix = [ [ 0 for j in range(72) ] for i in range(12) ]
-
-		
-		row=0
-		for idx in range(len(summary)):
-			matrix[row][idx]=1
-			for pos in summary[idx]:
-				matrix[row][pos]=1
-			row += 1
-		
-		def junk_row():
-			new_row = [0] * 72
-			index_pool = list( range(0,72) )
-			for  i in range(5):
-				idx = random.randint(0,len(index_pool)-1)
-				new_row[idx]=1
-				index_pool.pop(idx)
-			return new_row
-				
-		for junk in range(0):
-			new_pos = random.randint(0,len(matrix)-1)
-			matrix.insert( new_pos, junk_row())
-
-		
-		print_matrix(matrix,12,72)
-
-		lists = build_links( matrix )	
-
-		solution = [None for i in range(12) ]
-		search(0, lists, solution)
-		print(solution)
-		print_solution(solution)
-
+	def test_solve(self):
+		pentomino = Pentomino()
+		solutions = pentomino.solve(12, True)
+		print("Pentomino has {} solutions.".format(solutions))
+		self.assertTrue( solutions > 0 )
 
 def main():
         unittest.main()
