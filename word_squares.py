@@ -10,12 +10,13 @@ class WordSquare(dlx.ExactCover):
 	
 	ALPHABET_SIZE = 26
 
-	def __init__(self, dictionary='dictionary.txt'):
+	def __init__(self, dictionary='dictionary.txt', square_size=3):
 
 		super().__init__()
 
 
 		self.dictionary = [ word[:-1] for word in open(dictionary) ]
+		self.square_size = square_size
 
 		self.build_matrix()
 		self.build_links()
@@ -35,12 +36,19 @@ class WordSquare(dlx.ExactCover):
 		size = len(self.dictionary)
 
 
-		matrix_width = 6 + 9 * self.ALPHABET_SIZE
-		print('matrix width = {}'.format( matrix_width ))
+		
+		hor_vert_width = self.square_size * 2
+		matrix_width = hor_vert_width  + (self.square_size ** 2) * self.ALPHABET_SIZE
+		
+		print('matrix width = {}, square size = {}'.format( matrix_width, self.square_size ))
+
+		vertical_offsets = list( map(lambda x: x*self.square_size, range(self.square_size)) )
 
 		matrix = []
 		
 		for w in range(len(self.dictionary)):
+
+			print(self.dictionary[w])
 			
 			row = [ 0 ] * matrix_width
 
@@ -48,32 +56,29 @@ class WordSquare(dlx.ExactCover):
 			letters = [ ord(c) - 97 for c in list( self.dictionary[w] ) ]
 
 			# h positioning: 3 ways
-			for h in (0, 1, 2):
+			for h in range(self.square_size):
 				r = row[:]
 				r[h]=1
-				for l in (0, 1, 2):
-					r[ 6 + self.ALPHABET_SIZE * (h*3 + l) + letters[l] ]=1
+				for l in range(self.square_size):
+					r[ hor_vert_width + self.ALPHABET_SIZE * (h*self.square_size + l) + letters[l] ]=1
 				matrix.append( r )
 
-			for v in (0,1,2):
+			for v in range(self.square_size):
 				r = row[:]
-				r[3+v]=1
+				r[self.square_size + v]=1
 
-				square_positions = [ v + offset for offset in (0,3,6)]
+				square_positions = [ v + offset for offset in vertical_offsets ]
 
-				for l in (0,1,2):
+				for l in range(self.square_size):
 				
 					sp = square_positions[l]
-					for matrix_col in range( 6 + self.ALPHABET_SIZE * sp, 6 + self.ALPHABET_SIZE * (sp+1)):
+					for matrix_col in range( hor_vert_width + self.ALPHABET_SIZE * sp, hor_vert_width + self.ALPHABET_SIZE * (sp+1)):
 						r[matrix_col]=1
-					r[ 6 + self.ALPHABET_SIZE * sp + letters[l]] = 0
+					r[ hor_vert_width + self.ALPHABET_SIZE * sp + letters[l]] = 0
 				matrix.append( r )
 
 		self.matrix=matrix	
 
-					
-		#print(self.matrix)			
-		
 			
 
 
@@ -95,8 +100,8 @@ class WordSquare(dlx.ExactCover):
 
 			## add only those rows where either col 0, 1, or 2 is in the solution = horizontal words
 			#if 0 in nodes or 1 in nodes or 2 in nodes:
-			if nodes[0]<3:
-				solution_str_array.append( ('R0' if nodes[0]==0 else ('R1' if nodes[0]==1 else 'R2')) + ''.join([ self.matrix_col_to_letter(col) for col in nodes[1:] ]))
+			if nodes[0]<self.square_size:
+				solution_str_array.append( 'R' + str(nodes[0]) + ''.join([ self.matrix_col_to_letter(col) for col in nodes[1:] ]))
 				solution_str_array.sort()
 
 
@@ -104,14 +109,14 @@ class WordSquare(dlx.ExactCover):
 
 
 	def matrix_col_to_letter(self, col):
-		return chr((col-6)%self.ALPHABET_SIZE+97)
+		return chr((col-self.square_size*2)%self.ALPHABET_SIZE+97)
 	
 
 
 
-ws = WordSquare('dictionary.txt')
+ws = WordSquare('dictionary_4_letter_words.txt', 4)
 
-ws.solve(6)
+ws.solve(8)
 
 	
 
