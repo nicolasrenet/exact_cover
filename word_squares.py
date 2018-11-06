@@ -9,9 +9,7 @@ class WordSquare(dlx.ExactCover):
 	without giving any details. The following is a solution to the problem."""
 	
 	
-	ALPHABET_SIZE = 26
-
-	def __init__(self, dictionary='dictionary.txt', square_size=3):
+	def __init__(self, dictionary='dictionary.txt', square_size=3, alphabet_size=26):
 
 		super().__init__()
 
@@ -20,6 +18,7 @@ class WordSquare(dlx.ExactCover):
 		else:
 			self.dictionary = dictionary
 		self.square_size = square_size
+		self.alphabet_size = alphabet_size
 
 		self.build_matrix()
 		self.build_links()
@@ -41,7 +40,7 @@ class WordSquare(dlx.ExactCover):
 
 		
 		hor_vert_width = self.square_size * 2
-		matrix_width = hor_vert_width  + (self.square_size ** 2) * self.ALPHABET_SIZE
+		matrix_width = hor_vert_width  + (self.square_size ** 2) * self.alphabet_size
 		
 		print('matrix width = {}, square size = {}'.format( matrix_width, self.square_size ))
 
@@ -51,7 +50,7 @@ class WordSquare(dlx.ExactCover):
 		
 		for w in range(len(self.dictionary)):
 
-			print(self.dictionary[w])
+			#print(self.dictionary[w])
 			
 			row = [ 0 ] * matrix_width
 
@@ -63,7 +62,7 @@ class WordSquare(dlx.ExactCover):
 				r = row[:]
 				r[h]=1
 				for l in range(self.square_size):
-					r[ hor_vert_width + self.ALPHABET_SIZE * (h*self.square_size + l) + letters[l] ]=1
+					r[ hor_vert_width + self.alphabet_size * (h*self.square_size + l) + letters[l] ]=1
 				matrix.append( r )
 
 			for v in range(self.square_size):
@@ -75,19 +74,30 @@ class WordSquare(dlx.ExactCover):
 				for l in range(self.square_size):
 				
 					sp = square_positions[l]
-					for matrix_col in range( hor_vert_width + self.ALPHABET_SIZE * sp, hor_vert_width + self.ALPHABET_SIZE * (sp+1)):
+					for matrix_col in range( hor_vert_width + self.alphabet_size * sp, hor_vert_width + self.alphabet_size * (sp+1)):
 						r[matrix_col]=1
-					r[ hor_vert_width + self.ALPHABET_SIZE * sp + letters[l]] = 0
+					r[ hor_vert_width + self.alphabet_size * sp + letters[l]] = 0
 				matrix.append( r )
+
+		dlx.log(self.condense_matrix(matrix), 3)
 
 		self.matrix=matrix	
 
+
+	def condense_matrix(self, matrix):
+		""" Condense the matrix, for easier console display. 
+
+		:return: the matrix value, in condensed form
+		:rtype: str
+		"""
+		return  str(matrix)[1:-1].translate({ord(c): None for c in ' ,'})
 			
 
 
 	def solution_string(self, solution, solution_count=0):
 		"""
 		Return a human-readable solution of the problem.
+		:rtype: str
 		"""
 		count = 0
 		if solution_count > 0: count = solution_count
@@ -112,7 +122,7 @@ class WordSquare(dlx.ExactCover):
 
 
 	def matrix_col_to_letter(self, col):
-		return chr((col-self.square_size*2)%self.ALPHABET_SIZE+97)
+		return chr((col-self.square_size*2)%self.alphabet_size+97)
 	
 
 
@@ -129,7 +139,7 @@ class Test_WordSquare( unittest.TestCase ):
 		""" Testing with tiny dictionary: 3-letter words, on 7-letter alphabet  """
 		dictionary = ('abed','aced','aged','babe','bade','bead','beef','cafe','cage','cede',
 				'dead','deaf','deed','edge','face','fade','feed','gaff','gage','geed')
-		ws = WordSquare( dictionary, 4)  
+		ws = WordSquare( dictionary, 4, 7)  
 		self.assertEqual( ws.solve(8), 2 )
 
 
