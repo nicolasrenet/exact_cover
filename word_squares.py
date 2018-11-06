@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import exact_cover as dlx
+import unittest
 
 dlx.LOGLEVEL=1
 
@@ -14,8 +15,10 @@ class WordSquare(dlx.ExactCover):
 
 		super().__init__()
 
-
-		self.dictionary = [ word[:-1] for word in open(dictionary) ]
+		if type(dictionary) is str:
+			self.dictionary = [ word[:-1] for word in open(dictionary) ]
+		else:
+			self.dictionary = dictionary
 		self.square_size = square_size
 
 		self.build_matrix()
@@ -114,13 +117,31 @@ class WordSquare(dlx.ExactCover):
 
 
 
-ws = WordSquare('dictionary_4_letter_words.txt', 4)
+#ws = WordSquare('dictionary_5_letter_words.txt', 5)
 
-ws.solve(8)
+#ws.solve(10)
 
 	
 
 class Test_WordSquare( unittest.TestCase ):
 
 	def test_word_square_1(self):	
-		return True
+		""" Testing with tiny dictionary: 3-letter words, on 7-letter alphabet  """
+		dictionary = ('abed','aced','aged','babe','bade','bead','beef','cafe','cage','cede',
+				'dead','deaf','deed','edge','face','fade','feed','gaff','gage','geed')
+		ws = WordSquare( dictionary, 4)  
+		self.assertEqual( ws.solve(8), 2 )
+
+
+
+
+
+	
+
+
+def main():
+        unittest.main()
+
+if __name__ == '__main__':
+        main()
+
