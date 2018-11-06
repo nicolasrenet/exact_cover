@@ -3,7 +3,7 @@
 import unittest
 import exact_cover as dlx
 
-dlx.LOGLEVEL=3
+dlx.LOGLEVEL=1
 
 class Sudoku( dlx.ExactCover ):
 
@@ -38,11 +38,12 @@ class Sudoku( dlx.ExactCover ):
 			#solution_str_array += [ str( entry ) for entry in  sorted( solution_entries_array, key=lambda x: x[0]) ]
 
 			# the sudoku grid
+			#print(solution_entries_array)
 			solution_grid = [ row[:] for row in self.game ]		
 			for entry in solution_entries_array:
-				row = entry[0]//9
-				col = entry[0]%9
-				solution_grid[row][col] = entry[1] -9*(9+row) + 1
+				row = (entry[2]-(9*18))//9	
+				col = (entry[2]-(9*18))%9	
+				solution_grid[row][col] = entry[0]//18+1
 			solution_str_array.append('')
 			solution_str_array.append( self.game_string( solution_grid ))
 
@@ -62,7 +63,7 @@ class Sudoku( dlx.ExactCover ):
 			:param game: a numerical matrix of values in the range [0-9], where 0 indicates an empty position
 			:param box_constraint: meet the box constraint requirement
 			:type box_constraint: bool
-			:return: a Boolean matrix, with 324 (box constraint relaxed) or 486 (with box constraint met) columns
+			:return: a Boolean matrix, with 243 (box constraint relaxed) or 486 (with box constraint met) columns
 			:rtype: list
 			"""
 			matrix = []
@@ -122,48 +123,55 @@ class Sudoku( dlx.ExactCover ):
 						for possible in possible_values:
 							matrix.append( self.set_row( row, col, possible, box_constraint ))
 			print(len(matrix))
+			#self.print_matrix(matrix)
+
 			return matrix
+
+
+		def print_matrix(self, matrix):
+			for row in matrix:
+				for col in row:
+					print('{}'.format(col),end="")
+				print('')
+
+		def row_col_flatten(self, row, col):
+			return row * 9 + col
+
 
 
 		def set_row(self, row, col, val, box):
 			""" 
 			Create a new row in the matrix, with the following pattern:
 			
-			Subarrays R1-R9:
+			Subarrays R1-C1 (ensure that each of the nine 1s is on its own row and column)
 
-			[ column selection for row 1 : 9 elements ] ... [ column selection for row 9 : 9 elements ] 
+			[ row placement of value 1: 9 elements ] [ col placement of value 1: 9 elements ]
 
-			Subarrays RV1-RV9:
+			Subarrays R2-C2 (ensure that each of the nine 2s is on its own row and column)
 
-			[ values for row 1 : 9 elements ] ... [ values for row 9 : 9 elements ]
+			[ row placement of value 1: 9 elements ] [ col placement of value 1: 9 elements ]
 	
-			Subarrays C1-C9:
+			...
 
-			[ row selection for column 1 : 9 elements ] ... [ row selection for column 9 : 9 elements ] 
+			Subarrays R9-C9 (ensure that each of the nine 9s is on its own row and column)
 
-			Subarrays CV1-CV9:
+			[ row placement of value 1: 9 elements ] [ col placement of value 1: 9 elements ]
 
-			[ values for column 1 : 9 elements ] ... [ values for column 9 : 9 elements ]
+			Subarray P (ensure that no position is set by 2 different numbers)
 
-			Subarrays B1-B9:
+			[ 0 .. 81 ]
 
-			[ cell selection for box 1 : 9 elements ] ... [ cell selection for box 9 : 9 elements ] 
+			Total: 18*9  + 81 = 243
 
-			Subarrays BV1-BV9:
-
-			[ values for box 1 : 9 elements ] ... [ values for box 9 : 9 elements ]
-
-			Each row has (9*9) * 6 = 486 elements
+			If box constraint is to be met, the matrix has 81 extra columns: one for each box, with 9 positions in each (corresponding to the values set for that box)
 
 			Example:
-				if grid contains 7 in (5,8), create a new row of size 486 in the matrix with the following positions set to 1:
+				if grid contains 7 in (5,8), create a new row of size 180 in the matrix with the following positions set to 1:
 
-				R5[8]  (marks position 8 in row 5 as taken)
-				RV5[7] (position for this row is assigned value 7)
-				C8[5]	(marks position 5 in col 8 as taken)
-				CV8[7] (position for this column is assigned value 7)
-				B6[5] (marks position 5 in box 6 as taken)
-				BV6[7] (position for this box is assigned value 7)
+				R7[5] 	(7 is assigned row 5)
+				C7[8] 	(7 is assigned col 8)
+				P[4*9+8](grid position 44 is set)	
+				
 
 			Grid cells that have 2 or more candidate values result in as many new rows in the matrix.
 
@@ -172,37 +180,32 @@ class Sudoku( dlx.ExactCover ):
 			:param val: grid value
 			:param box: meet the box constraint requirement
 			"""
-			dlx.log( "set_row(box_constraint={})".format( box))
+			#dlx.log( "set_row(box_constraint={})".format( box))
 			if (box):
-				m_row = [ 0 for i in range( 9*9 * 6 ) ]
+				m_row = [ 0 for i in range( 9*18+ (81*2) ) ]
 			else:
-				m_row = [ 0 for i in range( 9*9 * 4 ) ]
-			# row * col position 
-			m_row[9*row + col] = 1
-			# value (unique for the row)
-			m_row[ 9*(9 + row) + val - 1] = 1
+				m_row = [ 0 for i in range( 9*18 + 81 ) ]
+			# grid position
+			m_row[ (9*2)*9  + self.row_col_flatten( row, col) ] = 1
 
-			# col * row position
-			m_row[ 9*9*2 + 9*col + row ] = 1
-			# value (unique for the col)
-			m_row[ 9*9*3 + 9*col + val - 1 ] = 1
+			# set row / col for value
+			m_row[ (val-1) * 18 + row ]=1
+			m_row[ (val-1) * 18 + 9 + col ]=1
+
+			#print(m_row)
 
 			# box constraint
 			if (box):
 				# box number, as computed from row/col
-				box_row = row%3
-				box_col = col%3
-				box_number = ( row - box_row + col// 3)
-				#print(row, col, box_number, box_row, box_col)
-				# box-based position
-				m_row[ 9*9*4 + 9*box_number + box_row*3+box_col   ] = 1
-				# box-based value
-				m_row[ 9*9*5 + 9*box_number + val - 1 ] = 1
+				box_row = row//3
+				box_col = col//3
+				box_number = (box_row * 3) + box_col
+				# setting value for this box in the matrix
+				m_row[ 243 + box_number * 9 + (val-1) ]=1	
 
+			#print(sum(m_row))
 			return m_row
-
-				 
-				
+		
 
 
 class SudokuTest( unittest.TestCase):
@@ -231,22 +234,37 @@ class SudokuTest( unittest.TestCase):
 		[3,4,0, 0,9,0, 0,0,8]
 	]
 
+
+	def atest_set_row(self):
+		
+		sudoku = Sudoku( self.game1, False )
+		control = [0] * (243 )
+
+		control [ 196 ]=1 	# grid position
+		control [ 129 ]=1	# number row
+		control [ 142 ]=1	# number col
+
+		print(control)
+		print(sudoku.set_row(3,7,8,False))
+
+		self.assertTrue( sudoku.set_row(3,7,8,False) == control )
+
 	def test_1_sudoku_without_box_constraint(self):
 		sudoku = Sudoku( self.game1, False )
-		self.assertEqual( sudoku.solve(81, count_only=True), 94571)
+		self.assertEqual( sudoku.solve(81, count_only=False), 94571)
 
 	
-	def test_2_sudoku(self):
+	def atest_2_sudoku(self):
 		sudoku = Sudoku( self.game1, True )
-		self.assertEqual( sudoku.solve(81), 1)
+		self.assertEqual( sudoku.solve(81, count_only=False), 1)
 
 	
-	def test_3_sudoku_without_box_constraint(self):
+	def atest_3_sudoku_without_box_constraint(self):
 		sudoku = Sudoku( self.game2, False )
 		self.assertEqual( sudoku.solve(81, count_only=True), 1582533)
 
 	
-	def test_4_sudoku(self):
+	def atest_4_sudoku(self):
 		sudoku = Sudoku( self.game2, True )
 		self.assertEqual( sudoku.solve(81), 1)
 		

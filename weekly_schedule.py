@@ -9,10 +9,10 @@ dlx.LOGLEVEL=1
 
 class WeeklySchedule( dlx.ExactCover ):
 
-	def __init__(self, teachers, load, rooms, sudoku=False):
+	def __init__(self, teachers, load, rooms, sudoku=False, secondary=0):
 
 
-		super().__init__()
+		super().__init__(secondary)
 
 		self.teachers=teachers
 		self.load=load
@@ -104,6 +104,7 @@ class WeeklySchedule( dlx.ExactCover ):
 		matrix = []
 		matrix_width = self.teachers + self.rooms * hours_worked
 
+		# enforce distinct rooms constraint for teachers	
 		if self.sudoku:
 			matrix_width += self.rooms * self.teachers
 
@@ -230,17 +231,15 @@ class WeeklySchedule( dlx.ExactCover ):
 		return permutations
 		
 
+ws = WeeklySchedule(6,2,3)
 
-
-
-
+ws.solve(6)
 
 class WeeklySchedule_TestClass( unittest.TestCase):
 
 		
 	def test_n_choose_r_1(self):
 		values = range(0, 10)
-
 
 		self.assertEqual( len( WeeklySchedule.n_choose_r( values, 3 )), 120 )
 
