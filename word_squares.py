@@ -2,7 +2,7 @@
 import exact_cover as dlx
 import unittest
 
-dlx.LOGLEVEL=3
+dlx.LOGLEVEL=1
 
 class WordSquare(dlx.ExactCover):
 	""" On the last page of his "Dancing Links" article, D. Knuth briefly mentions his using the DLX algorithm to generate 3x3 word squares,
@@ -22,6 +22,7 @@ class WordSquare(dlx.ExactCover):
 			self.dictionary = dictionary
 		self.square_size = square_size
 		self.alphabet_size = alphabet_size
+		self.diagonal_width = 2*self.square_size*self.alphabet_size if self.square_size % 2 == 0  else (2*self.square_size-1)*self.alphabet_size
 
 		self.build_matrix()
 		self.build_links()
@@ -34,24 +35,26 @@ class WordSquare(dlx.ExactCover):
 		
 		 The matrix has the following structure:
 		
-		 		| 3 cols to code the square row 
-				| 3 cols to code the square col 
+		 		| N cols to code the square row 
+				| N cols to code the square col 
 				| 2 cols to code the square diagonal
-				| 26 x 9 columns that code the letters for each of the 9 positions 
-				| 26 x  2n [ 2n-1 if n odd ] columns that code the letters for each of the 5 diagonal positions: each horizontal word sets them with 1s,
+				| 26 x N^2 columns that code the letters for each of the 9 positions 
+				| 26 x  2N [ 2N-1 if n odd ] columns that code the letters for each of the 5 diagonal positions: each horizontal word sets them with 1s,
 					each diagonal word set them with 0s
 						
 		 """
 
 
-		size = len(self.dictionary)
 
+		size = len(self.dictionary)
+		
+		row = 0
+		matrix2word=[]
 
 		
 		hor_vert_diag_width = self.square_size * 2 + 2
 		positions_col_width =  (self.square_size ** 2) * self.alphabet_size
-		diagonal_width = 2*self.square_size*self.alphabet_size if self.square_size % 2 == 0  else (2*self.square_size-1)*self.alphabet_size
-		matrix_width = hor_vert_diag_width  + positions_col_width + diagonal_width
+		matrix_width = hor_vert_diag_width  + positions_col_width + self.diagonal_width
 		
 
 		
@@ -80,12 +83,13 @@ class WordSquare(dlx.ExactCover):
 					
 					# setting diagonal positions
 					diag_pos = self.horizontal_to_diagonal_column(n, h, l)
-					print('Diagonal col = {}'.format(diag_pos))
-					if diag_pos:
-						print('{}'.format( hor_vert_diag_width  + positions_col_width + diag_pos*self.alphabet_size + letters[l] ))
+					#print('Diagonal col = {}'.format(diag_pos))
+					if diag_pos is not None:
+						#if h==0: print('{}:H0:{}'.format(self.dictionary[w],  hor_vert_diag_width  + positions_col_width + diag_pos*self.alphabet_size + letters[l] ))
 						r[ hor_vert_diag_width  + positions_col_width + diag_pos*self.alphabet_size + letters[l] ]=1
 
 				matrix.append( r )
+				matrix2word.append((self.dictionary[w], 'H{}'.format(h), str(r).translate({ord(c): None for c in ' ,'})))
 
 			# vertical positioning
 			for v in range(n):
@@ -102,8 +106,9 @@ class WordSquare(dlx.ExactCover):
 						r[matrix_col]=1
 					r[ hor_vert_diag_width + self.alphabet_size * sp + letters[l]] = 0
 				matrix.append( r )
+				matrix2word.append((self.dictionary[w], 'V{}'.format(v), str(r).translate({ord(c): None for c in ' ,'})))
 
-			# down diagonal placement
+			# diagonal placement
 			for d in (0,1):
 				r = row[:]
 				r[n*2+d]=1
@@ -114,13 +119,15 @@ class WordSquare(dlx.ExactCover):
 							hor_vert_diag_width  + positions_col_width + (dp+1)*self.alphabet_size):
 						r[pos]=1
 					r[ hor_vert_diag_width  + positions_col_width + dp*self.alphabet_size + letters[l] ]=0
-				print(r)
+				#print(r)
 				# TODO: negatives
 				matrix.append(r)
+				matrix2word.append((self.dictionary[w], 'D{}'.format(d), str(r).translate({ord(c): None for c in ' ,'})))
 
-				
+		#for i in matrix2word:
+		#	print(i)
 
-		dlx.log(self.condense_matrix(matrix), 3)
+		#dlx.log(self.condense_matrix(matrix), 3)
 
 		self.matrix=matrix	
 
@@ -190,15 +197,14 @@ class WordSquare(dlx.ExactCover):
 			## add only those rows where either col 0, 1, or 2 is in the solution = horizontal words
 			#if 0 in nodes or 1 in nodes or 2 in nodes:
 			if nodes[0]<self.square_size:
-				solution_str_array.append( 'R' + str(nodes[0]) + ''.join([ self.matrix_col_to_letter(col) for col in nodes[1:] ]))
+				solution_str_array.append( 'R' + str(nodes[0]) + ''.join([ self.matrix_col_to_letter(col) for col in nodes[1:-2] ]))
 				solution_str_array.sort()
 
-		
 		return '\n'.join( ''.join(r[2:]) for r in solution_str_array ) + '\n'
 
 
 	def matrix_col_to_letter(self, col):
-		return chr((col-self.square_size*2)%self.alphabet_size+97)
+		return chr((col-self.square_size*2-2)%self.alphabet_size+97)
 	
 	
 
@@ -345,7 +351,7 @@ class Test_WordSquare( unittest.TestCase ):
 				'dead','deaf','deed','edge','face','fade','feed','gaff','gage','geed',
 				'aegd','dddd')
 		ws = WordSquare( dictionary, 4, 7)  
-		self.assertEqual( ws.solve(10), 2 )
+		self.assertEqual( ws.solve(10), 4 )
 
 
 
