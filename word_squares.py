@@ -193,7 +193,7 @@ class WordSquare(dlx.ExactCover):
 				solution_str_array.append( 'R' + str(nodes[0]) + ''.join([ self.matrix_col_to_letter(col) for col in nodes[1:] ]))
 				solution_str_array.sort()
 
-
+		
 		return '\n'.join( ''.join(r[2:]) for r in solution_str_array ) + '\n'
 
 
@@ -202,9 +202,9 @@ class WordSquare(dlx.ExactCover):
 	
 	
 
-ws = WordSquare('dictionary_3_letter_words.txt', 3)
+#ws = WordSquare('dictionary_3_letter_words.txt', 3)
 
-ws.solve(8)
+#ws.solve(8)
 
 	
 
@@ -340,11 +340,12 @@ class Test_WordSquare( unittest.TestCase ):
 		
 
 	def test_word_square_1(self):	
-		""" Testing with tiny dictionary: 3-letter words, on 7-letter alphabet  """
+		""" Testing with tiny dictionary: 4-letter words, on 7-letter alphabet  """
 		dictionary = ('abed','aced','aged','babe','bade','bead','beef','cafe','cage','cede',
-				'dead','deaf','deed','edge','face','fade','feed','gaff','gage','geed')
+				'dead','deaf','deed','edge','face','fade','feed','gaff','gage','geed',
+				'aegd','dddd')
 		ws = WordSquare( dictionary, 4, 7)  
-		self.assertEqual( ws.solve(8), 2 )
+		self.assertEqual( ws.solve(10), 2 )
 
 
 
