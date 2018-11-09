@@ -17,12 +17,13 @@ class WordSquare(dlx.ExactCover):
 		super().__init__()
 
 		if type(dictionary) is str:
-			self.dictionary = [ word[:-1] for word in open(dictionary) ]
+			with open(dictionary) as d:
+				self.dictionary = [ word[:-1] for word in d ]
 		else:
 			self.dictionary = dictionary
 		self.square_size = square_size
 		self.alphabet_size = alphabet_size
-		self.diagonal_width = 2*self.square_size*self.alphabet_size if self.square_size % 2 == 0  else (2*self.square_size-1)*self.alphabet_size
+		self.diagonal_width = 2*self.square_size*self.alphabet_size
 
 		self.build_matrix()
 		self.build_links()
@@ -105,6 +106,10 @@ class WordSquare(dlx.ExactCover):
 					for matrix_col in range( hor_vert_diag_width + self.alphabet_size * sp, hor_vert_diag_width + self.alphabet_size * (sp+1)):
 						r[matrix_col]=1
 					r[ hor_vert_diag_width + self.alphabet_size * sp + letters[l]] = 0
+
+					# set middle position in positive (for up diagonal match)
+					if n%2>0 and v==n//2 and v==l:
+						r[ hor_vert_diag_width  + positions_col_width + (n+n//2)*self.alphabet_size + letters[l] ] = 1
 				matrix.append( r )
 				matrix2word.append((self.dictionary[w], 'V{}'.format(v), str(r).translate({ord(c): None for c in ' ,'})))
 
@@ -124,49 +129,20 @@ class WordSquare(dlx.ExactCover):
 				matrix.append(r)
 				matrix2word.append((self.dictionary[w], 'D{}'.format(d), str(r).translate({ord(c): None for c in ' ,'})))
 
-		#for i in matrix2word:
-		#	print(i)
+		for i in matrix2word:
+			print(i)
 
 		#dlx.log(self.condense_matrix(matrix), 3)
 
 		self.matrix=matrix	
 
 
-	@classmethod
-	def horizontal_to_diagonal_column(cls, n, row, letter):
-		"""
-		For a given row and word position, return the diagonal column numbers
-		set.
-
-		
- 		Assume following numbering:
-
-		0	0       8     	0	0     7  
-		1	  1   7		1	  1 6
-		2	    2		2	  5 2
-		3	  6   3		3	4     3
-		4	5	4		
-
-		:return: a column number
-		:rtype: tuple
-		"""
-		if letter==row: return row
-		if letter==n-row-1:
-			middle = n//2
-			if n%2 == 0 or row > middle:
-				return n+letter
-			return n+letter-1
-		return None
-		
 
 	@classmethod
 	def diagonal_to_diagonal_column(cls, n, updown, letter):
-		middle = n//2
-		if updown==0 or (n%2>0 and letter==middle):
+		if updown==0: 
 			return letter
-		if n%2==0 or letter<middle:
-			return n+letter
-		return n+letter-1
+		return n+letter
 
 	def condense_matrix(self, matrix):
 		""" Condense the matrix, for easier console display. 
@@ -197,7 +173,7 @@ class WordSquare(dlx.ExactCover):
 			## add only those rows where either col 0, 1, or 2 is in the solution = horizontal words
 			#if 0 in nodes or 1 in nodes or 2 in nodes:
 			if nodes[0]<self.square_size:
-				solution_str_array.append( 'R' + str(nodes[0]) + ''.join([ self.matrix_col_to_letter(col) for col in nodes[1:-2] ]))
+				solution_str_array.append( 'R' + str(nodes[0]) + ''.join([ self.matrix_col_to_letter(col) for col in nodes[1:self.square_size+1] ]))
 				solution_str_array.sort()
 
 		return '\n'.join( ''.join(r[2:]) for r in solution_str_array ) + '\n'
@@ -213,6 +189,29 @@ class WordSquare(dlx.ExactCover):
 #ws.solve(8)
 
 	
+	@classmethod
+	def horizontal_to_diagonal_column(cls, n, row, letter):
+		"""
+		For a given row and word position, return the diagonal column numbers
+		set.
+
+		
+ 		Assume following numbering:
+
+		0	0       9     	0	0     7  
+		1	  1   8		1	  1 6
+		2	   2/7		2	  5 2
+		3	  6   3		3	4     3
+		4	5	4		
+
+		:return: a column number
+		:rtype: tuple
+		"""
+		if letter==row: return row
+		if letter==n-row-1:
+			return n+letter
+		return None
+		
 
 class Test_WordSquare( unittest.TestCase ):
 	
@@ -254,7 +253,7 @@ class Test_WordSquare( unittest.TestCase ):
 	def test_horizontal_to_diagonal_column_odd_row_1_503(self):
 		self.assertEqual( WordSquare.horizontal_to_diagonal_column(5,0,3), None)
 	def test_horizontal_to_diagonal_column_odd_row_1_504(self):
-		self.assertEqual( WordSquare.horizontal_to_diagonal_column(5,0,4), 8)
+		self.assertEqual( WordSquare.horizontal_to_diagonal_column(5,0,4), 9)
 		
 
 	def test_horizontal_to_diagonal_column_odd_row_2_510(self):
@@ -264,7 +263,7 @@ class Test_WordSquare( unittest.TestCase ):
 	def test_horizontal_to_diagonal_column_odd_row_2_512(self):
 		self.assertEqual( WordSquare.horizontal_to_diagonal_column(5,1,2), None)
 	def test_horizontal_to_diagonal_column_odd_row_2_513(self):
-		self.assertEqual( WordSquare.horizontal_to_diagonal_column(5,1,3), 7)
+		self.assertEqual( WordSquare.horizontal_to_diagonal_column(5,1,3), 8)
 	def test_horizontal_to_diagonal_column_odd_row_2_514(self):
 		self.assertEqual( WordSquare.horizontal_to_diagonal_column(5,1,4), None)
 		
@@ -338,11 +337,11 @@ class Test_WordSquare( unittest.TestCase ):
 	def test_diagonal_to_diagonal_column_odd_row_1_511(self):
 		self.assertEqual( WordSquare.diagonal_to_diagonal_column(5,1,1), 6)
 	def test_diagonal_to_diagonal_column_odd_row_1_512(self):
-		self.assertEqual( WordSquare.diagonal_to_diagonal_column(5,1,2), 2)
+		self.assertEqual( WordSquare.diagonal_to_diagonal_column(5,1,2), 7)
 	def test_diagonal_to_diagonal_column_odd_row_1_513(self):
-		self.assertEqual( WordSquare.diagonal_to_diagonal_column(5,1,3), 7)
+		self.assertEqual( WordSquare.diagonal_to_diagonal_column(5,1,3), 8)
 	def test_diagonal_to_diagonal_column_odd_row_1_514(self):
-		self.assertEqual( WordSquare.diagonal_to_diagonal_column(5,1,4), 8)
+		self.assertEqual( WordSquare.diagonal_to_diagonal_column(5,1,4), 9)
 		
 
 	def test_word_square_1(self):	
@@ -353,6 +352,16 @@ class Test_WordSquare( unittest.TestCase ):
 		ws = WordSquare( dictionary, 4, 7)  
 		self.assertEqual( ws.solve(10), 4 )
 
+	def test_word_square_2(self):
+		dictionary = ('ate','win','led','aid','lie','awl','tie','end','bed','oar','wry','bow','ear','dry','bay','wad')
+		ws = WordSquare( dictionary, 3, 26)
+		self.assertEqual( ws.solve(8), 2)
+
+
+	def test_word_square_3(self):
+		dictionary = 'dictionary_3_letter_words.txt'
+		ws = WordSquare( dictionary, 3, 26)
+		self.assertEqual( ws.solve(8), 2)
 
 
 
