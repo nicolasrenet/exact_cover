@@ -26,7 +26,7 @@ class Color:
 
 class Node():
 	""" 
-	A data node: the elementary unit of the net of linked lists that represent the exact cover matrix
+	A data node: the elementary unit of the net of linked lists that represents the exact cover matrix
 	in the DLX algorithm.
 	"""
 	
@@ -224,17 +224,22 @@ class ExactCover():
 				if not count_only:
 					print("SUCCESS")
 					print(self.solution_string( solution, solution_count ))
+				elif solution_count%5000 == 0:
+					print("{} solutions".format(solution_count))
+					
 				return
 
 			c = self.h.right
 			min_c = self.h.right
 			min_size = self.h.right.size
 			while c is not self.h:
+				log("Column {} has size {}".format(c.name, c.size))
 				if c.size < min_size:
 					min_c = c
 					min_size = c.size 
 				c = c.right
 			c = min_c
+			log("Col {} has size {}: chosen".format(c.name, c.size))
 			
 			if (c.size == 0):
 				log("DEAD END! Column {} has not been selected, but all rows in it have been removed. Backtracking...".format(int(c.name)+1))
@@ -588,7 +593,7 @@ class ExactCover_UnitTest( unittest.TestCase ):
 	
 		self.assertTrue( ec.solve(7) == 1)
 
-	def atest_search_6(self):
+	def test_search_6(self):
 			
 		ec = ExactCover(5)
 		ec.matrix = self.matrix6
@@ -597,7 +602,7 @@ class ExactCover_UnitTest( unittest.TestCase ):
 	
 		self.assertTrue( ec.solve(7) == 1)
 
-	def test_exam_3(self):
+	def atest_exam_3(self):
 		
 		ec = ExactCover()
 		ec.matrix = self.matrix_exam_3

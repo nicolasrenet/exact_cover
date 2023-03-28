@@ -11,7 +11,6 @@ class WordSquare(dlx.ExactCover):
 	This version satisfies the up- and down-diagonal constraints.
 	"""
 	
-	
 	def __init__(self, dictionary='dictionary.txt', square_size=3, alphabet_size=26):
 
 		super().__init__()
@@ -21,6 +20,7 @@ class WordSquare(dlx.ExactCover):
 				self.dictionary = [ word[:-1] for word in d ]
 		else:
 			self.dictionary = dictionary
+
 		self.square_size = square_size
 		self.alphabet_size = alphabet_size
 		self.diagonal_width = 2*self.square_size*self.alphabet_size
@@ -44,9 +44,6 @@ class WordSquare(dlx.ExactCover):
 					each diagonal word set them with 0s
 						
 		 """
-
-
-
 		size = len(self.dictionary)
 		
 		matrix2word=[]
@@ -176,9 +173,6 @@ class WordSquare(dlx.ExactCover):
 	
 	
 
-#ws = WordSquare('dictionary_3_letter_words.txt', 3)
-
-#ws.solve(8)
 
 	
 	@classmethod
@@ -187,14 +181,13 @@ class WordSquare(dlx.ExactCover):
 		For a given row and word position, return the diagonal column numbers
 		set.
 
-		
  		Assume following numbering:
 
 		0	0       9     	0	0     7  
 		1	  1   8		1	  1 6
 		2	   2/7		2	  5 2
 		3	  6   3		3	4     3
-		4	5	4		
+		4	5       4		
 
 		:return: a column number
 		:rtype: tuple
@@ -204,6 +197,9 @@ class WordSquare(dlx.ExactCover):
 			return n+letter
 		return None
 		
+ws = WordSquare('dictionary_4_letter_words.txt', 4)
+
+ws.solve(10)
 
 class Test_WordSquare( unittest.TestCase ):
 	
